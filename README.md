@@ -2,8 +2,6 @@
 
 A college football game for the Nintendo DS, built with devkitPro/libnds.
 
-Top-down, player-controlled gameplay — you directly control the ball carrier, not a play-selection system.
-
 ## Requirements
 
 - [devkitPro](https://devkitpro.org/) with devkitARM and libnds
