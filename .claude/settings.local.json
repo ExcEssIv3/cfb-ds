@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//opt/devkitpro/examples/nds/templates/**)",
+      "Read(//opt/devkitpro/examples/nds/Graphics/**)",
+      "Read(//opt/devkitpro/libnds/include/**)",
+      "Read(//opt/devkitpro/**)",
+      "Bash(make)",
+      "Bash(python3:*)"
+    ]
+  }
+}
