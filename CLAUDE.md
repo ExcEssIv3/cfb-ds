@@ -40,15 +40,46 @@ cfb/
     ├── Makefile          # ARM9 build (main game CPU)
     ├── graphics/         # PNG sprites (converted by grit at build time)
     └── source/
-        └── main.c        # entry point — start here
+        ├── main.cpp      # entry point
+        ├── field/        # Field class — geometry constants, game state
+        ├── football/     # Football class — flight arc, fumble state
+        ├── physics/      # Physics namespace — move(), distance()
+        ├── renderer/     # Renderer namespace — drawRect(), drawPlayer(), drawField()
+        └── players/
+            ├── player.h/cpp          # Base Player — position, speed, move(), goTo()
+            ├── offense/
+            │   ├── offensive_player  # OffensivePlayer — d-pad input, hasBall
+            │   ├── quarterback/
+            │   ├── running_back/
+            │   ├── wide_receiver/
+            │   ├── tight_end/
+            │   └── offensive_line/
+            └── defense/
+                ├── defensive_player  # DefensivePlayer — runAI() stub
+                ├── cornerback/
+                ├── linebacker/
+                └── safety/
 ```
 
 The ARM7 CPU uses the pre-built `ds7_maine.elf` stub from devkitPro/calico (same as cfb-old), so there's no arm7/ source to maintain.
 
+The ARM9 Makefile uses `find source -type d` to collect all source subdirectories automatically — no Makefile changes needed when adding new directories.
+
+## Architecture
+
+- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, and the 11-player offense/defense arrays. Static constants define field geometry (`PIXELS_PER_YARD`, `DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.).
+- **Renderer** — owns all colors as macros. `drawField(drawPosition, lineOfScrimmage, firstDown)` draws sidelines, scrolling 5-yard markers, and the two special lines.
+- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. OffensivePlayer adds d-pad control; DefensivePlayer adds AI stub.
+- **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance.
+- **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
+
 ## Game Design
 
 - **Perspective**: top-down view of the field
-- **Control**: player directly controls the ball carrier using the d-pad/buttons
+- **Top screen**: game field (framebuffer mode, VRAM bank A)
+- **Bottom screen**: black for now (MODE_5_2D, no layers enabled)
+- **Control**: d-pad moves the ball carrier; A throws the ball
+- **Field**: 120 yards total (10 endzone + 100 playing + 10 endzone), narrower than real life by design
 - **Goal**: get the logic working first — real control, real movement, real defense AI — before worrying about presentation polish
 
 ## DS Basics (Quick Reference)
@@ -61,3 +92,4 @@ The ARM7 CPU uses the pre-built `ds7_maine.elf` stub from devkitPro/calico (same
 - **OAM** — Object Attribute Memory, controls hardware sprites
 - **VRAM** — Video RAM banks (A–I), must be mapped before use
 - **grit** — converts PNG graphics to DS sprite/tile data at build time
+- **SCREEN_WIDTH / SCREEN_HEIGHT** — defined by libnds (`nds/arm9/video.h`), do not redefine
