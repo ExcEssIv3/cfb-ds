@@ -18,7 +18,7 @@ int main(void) {
     vramSetBankA(VRAM_A_LCD);
     videoSetMode(MODE_FB0);
     videoSetModeSub(MODE_5_2D);
-    OffensivePlayer* qb = new OffensivePlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, OFFENSE_COLOR, PLAYER_SIZE, PLAYER_SPEED, true);
+    OffensivePlayer* qb = new OffensivePlayer(SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, OFFENSE_COLOR, PLAYER_SIZE, PLAYER_SPEED, true /* hasBall */);
     Football* ball = new Football(qb->x, qb->y);
 
     while (1) {

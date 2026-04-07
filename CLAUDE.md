@@ -55,10 +55,11 @@ cfb/
             │   ├── tight_end/
             │   └── offensive_line/
             └── defense/
-                ├── defensive_player  # DefensivePlayer — runAI() stub
+                ├── defensive_player  # DefensivePlayer — runAI() stub, hasBall
                 ├── cornerback/
                 ├── linebacker/
-                └── safety/
+                ├── safety/
+                └── defensive_line/
 ```
 
 The ARM7 CPU uses the pre-built `ds7_maine.elf` stub from devkitPro/calico (same as cfb-old), so there's no arm7/ source to maintain.
@@ -67,9 +68,9 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 ## Architecture
 
-- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, and the 11-player offense/defense arrays. Static constants define field geometry (`PIXELS_PER_YARD`, `DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.).
+- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, and a `Football*` pointer. Static constants define field geometry (`PIXELS_PER_YARD`, `DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.).
 - **Renderer** — owns all colors as macros. `drawField(drawPosition, lineOfScrimmage, firstDown)` draws sidelines, scrolling 5-yard markers, and the two special lines.
-- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. OffensivePlayer adds d-pad control; DefensivePlayer adds AI stub.
+- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. OffensivePlayer has `hasBall` — when true, gates d-pad input in `runAI()`. DefensivePlayer has `hasBall` (default false) for fumble/interception possession; defense is never user-controlled.
 - **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
 

@@ -3,7 +3,7 @@
 #include "offensive_player.h"
 
 void OffensivePlayer::runAI() {
-    if (this->userControlled) {
+    if (this->hasBall) {
         uint32_t keys = keysHeld();
         if(keys & KEY_UP) {
             if (keys & KEY_RIGHT) {

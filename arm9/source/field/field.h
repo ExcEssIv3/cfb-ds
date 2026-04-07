@@ -3,6 +3,7 @@
 #include <nds.h>
 #include "../players/offense/offensive_player.h"
 #include "../players/defense/defensive_player.h"
+#include "../football/football.h"
 
 class Field {
 public:
@@ -23,6 +24,7 @@ public:
 
     OffensivePlayer* offense[PLAYER_COUNT];
     DefensivePlayer* defense[PLAYER_COUNT];
+    Football* football;
 
     Field();
 };
