@@ -5,6 +5,6 @@
 class Quarterback : public OffensivePlayer {
 public:
 
-    Quarterback(float x, float y, uint16_t color, int size, float speed, bool hasBall)
-        : OffensivePlayer(x, y, color, size, speed, hasBall) {};
-}
+    Quarterback(float x, float y, int size, float speed, bool hasBall)
+        : OffensivePlayer(x, y, size, speed, hasBall) {};
+};

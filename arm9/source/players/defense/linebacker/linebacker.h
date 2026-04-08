@@ -4,6 +4,6 @@
 
 class Linebacker : public DefensivePlayer {
 public:
-    Linebacker(float x, float y, uint16_t color, int size, float speed)
-        : DefensivePlayer(x, y, color, size, speed) {};
+    Linebacker(float x, float y, int size, float speed)
+        : DefensivePlayer(x, y, size, speed) {};
 };

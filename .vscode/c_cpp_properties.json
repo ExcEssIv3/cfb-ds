@@ -5,6 +5,7 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "/opt/devkitpro/libnds/include",
+                "/opt/devkitpro/calico/include",
                 "/opt/devkitpro/devkitARM/arm-none-eabi/include",
                 "/opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0",
                 "/opt/devkitpro/devkitARM/arm-none-eabi/include/c++/15.2.0/arm-none-eabi",
@@ -14,7 +15,7 @@
             "defines": [
                 "ARM9"
             ],
-            "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-gcc",
+            "compilerPath": "/opt/devkitpro/devkitARM/bin/arm-none-eabi-g++",
             "cStandard": "c11",
             "cppStandard": "c++17",
             "intelliSenseMode": "linux-gcc-arm"

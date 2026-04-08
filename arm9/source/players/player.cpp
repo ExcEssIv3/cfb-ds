@@ -5,10 +5,9 @@
 Player::Player(
     float x,
     float y,
-    uint16_t color,
     int size,
     float speed
-) : x(x), y(y), color(color), size(size), speed(speed) {}
+) : x(x), y(y), size(size), speed(speed) {}
 
 void Player::move(float direction) {
     x += cosf(direction) * speed;
