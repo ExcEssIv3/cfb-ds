@@ -69,15 +69,15 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 ## Architecture
 
-- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, and a `Football*` pointer. Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`PIXELS_PER_YARD`, `DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `convertToPixelYards(float)` converts yard values to pixel yards.
-- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors). `drawOffensePlayer(player, xOffset)` and `drawDefensePlayer(player, xOffset)` draw players in screen space. `drawField(scrollOffset, lineOfScrimmage, firstDown)` draws sidelines, scrolling 5-yard markers, and the two special lines. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes.
-- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. No color field — colors are renderer concerns. OffensivePlayer has `hasBall` — when true, gates d-pad input in `runAI()`. DefensivePlayer has `hasBall` (default false) for fumble/interception possession; defense is never user-controlled.
-- **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance.
+- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, and a `Football*` pointer. Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `PIXELS_PER_YARD` and `convertToPixelYards(float)` live in `utils.h`.
+- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors). `drawOffensePlayer(player, xOffset)` and `drawDefensePlayer(player, xOffset)` draw players in screen space. `drawField(scrollOffset, lineOfScrimmage, firstDown)` draws sidelines, scrolling 5-yard markers, and the two special lines. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
+- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. No color field — colors are renderer concerns. OffensivePlayer has `hasBall` — when true, gates d-pad input in `runAI(Football*)`. DefensivePlayer has `hasBall` (default false) for fumble/interception possession; defense is never user-controlled.
+- **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
 
 ## Units
 
-- **Pixel yards (px-yd)** — the standard unit for all field-space coordinates and distances. Conversion: `yards * PIXELS_PER_YARD`. Use `Field::convertToPixelYards(float yards)` to convert. Player positions, line of scrimmage, first down marker, and draw position are all stored in pixel yards.
+- **Pixel yards (px-yd)** — the standard unit for all field-space coordinates and distances. Conversion: `yards * PIXELS_PER_YARD`. Use `convertToPixelYards(float yards)` from `utils.h` to convert. Player positions, line of scrimmage, first down marker, and draw position are all stored in pixel yards.
 
 ## Game Design
 

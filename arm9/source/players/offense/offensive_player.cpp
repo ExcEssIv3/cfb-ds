@@ -1,9 +1,14 @@
 #include <nds.h>
 #include <cmath>
+#include "../../football/football.h"
 #include "offensive_player.h"
 
-void OffensivePlayer::runAI() {
-    if (this->hasBall) {
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif
+
+void OffensivePlayer::runAI(Football* football) {
+    if (hasBall) {
         uint32_t keys = keysHeld();
         if(keys & KEY_UP) {
             if (keys & KEY_RIGHT) {
@@ -37,7 +42,5 @@ void OffensivePlayer::runAI() {
             Player::move(0);
             return;
         }
-    } else {
-        // TODO: implement ai logic
     }
 }

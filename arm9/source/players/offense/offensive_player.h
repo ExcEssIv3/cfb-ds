@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../player.h"
+#include "../../football/football.h"
 
 class OffensivePlayer : public Player {
 public:
@@ -9,5 +10,5 @@ public:
     OffensivePlayer(float x, float y, int size, float speed, bool hasBall)
         : Player(x, y, size, speed), hasBall(hasBall) {};
 
-    void runAI();
+    virtual void runAI(Football* football);
 };

@@ -31,13 +31,11 @@ void Football::update() {
             float heightFuncNormalized = heightFunc / (totalDistance * totalDistance / 4);
             float maxHeight = 4.0f;
 
-            int drawSize = (int)floorf(heightFuncNormalized * maxHeight) + size;
-            Renderer::drawRect((int) x, (int) y, drawSize, drawSize, color);
+            drawSize = (int)floorf(heightFuncNormalized * maxHeight) + size;
             break;
         }
         case FootballState::FUMBLED:
             // TODO: add fumble logic
-            Renderer::drawRect((int)x, (int)y, size, size, color);
             break;
         default:
             break;

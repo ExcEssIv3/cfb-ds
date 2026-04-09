@@ -13,11 +13,11 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
     drawRect(0, 0, VIEWPORT_WIDTH, Field::TOP, SIDELINE_COLOR);
     drawRect(0, Field::BOTTOM, VIEWPORT_WIDTH, VIEWPORT_HEIGHT - Field::BOTTOM, SIDELINE_COLOR);
 
-    int firstLine = (int)ceil(drawPosition / (5.0 * Field::PIXELS_PER_YARD));
-    int lastLine  = (int)floor((drawPosition + VIEWPORT_WIDTH - 1) / (5.0 * Field::PIXELS_PER_YARD));
+    int firstLine = (int)ceil(drawPosition / (5.0 * PIXELS_PER_YARD));
+    int lastLine  = (int)floor((drawPosition + VIEWPORT_WIDTH - 1) / (5.0 * PIXELS_PER_YARD));
 
     for (int i = firstLine; i <= lastLine; i++) {
-        int fieldX  = i * 5 * Field::PIXELS_PER_YARD;
+        int fieldX  = i * 5 * PIXELS_PER_YARD;
         int screenX = fieldX - drawPosition;
         drawRect(screenX, Field::TOP, 1, Field::DRAW_HEIGHT, LINE_COLOR);
     }

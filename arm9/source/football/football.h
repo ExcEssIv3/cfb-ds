@@ -17,6 +17,7 @@ class Football {
         float t = 0.0f; // tracks travel
         uint16_t color = RGB15(17, 8, 2);
         int size = 4;
+        int drawSize = size;
 
         Football(float x, float y)
             : x(x), y(y), startX(x), startY(y), destinationX(x), destinationY(y) {};

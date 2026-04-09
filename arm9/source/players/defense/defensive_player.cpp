@@ -2,6 +2,6 @@
 #include <cmath>
 #include "defensive_player.h"
 
-void DefensivePlayer::runAI() {
+void DefensivePlayer::runAI(Football* football) {
     return;
 }
