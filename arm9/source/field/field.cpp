@@ -54,9 +54,4 @@ void Field::draw() {
     Renderer::drawRect(0, BOTTOM, VIEWPORT_WIDTH, VIEWPORT_HEIGHT - BOTTOM, SIDELINE_COLOR);
 
     Renderer::flush();
-
-    // Debug: print scroll state to bottom screen console
-    int scrollOff = drawPosition - 64;
-    int firstLine = (int)ceil(scrollOff / (5.0 * PIXELS_PER_YARD));
-    int lastLine  = (int)floor((scrollOff + VIEWPORT_WIDTH - 1) / (5.0 * PIXELS_PER_YARD));
 }

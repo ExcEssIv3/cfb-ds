@@ -45,7 +45,8 @@ cfb/
         ├── field/        # Field class — geometry, game state, update(), draw()
         ├── football/     # Football class — flight arc, fumble state
         ├── physics/      # Physics namespace — move(), distance()
-        ├── renderer/     # Renderer namespace — drawRect(), drawOffensePlayer(), drawDefensePlayer(), drawField()
+        ├── renderer/     # Renderer namespace — drawRect(), drawOffensePlayer(), drawDefensePlayer(), drawField(), flush()
+        ├── perf/         # Perf namespace — startFrame(), endFrame(), draw(); FPS/ms/heap stats on bottom screen
         └── players/
             ├── player.h/cpp          # Base Player — position, speed, move(), goTo()
             ├── offense/

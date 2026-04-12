@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <cmath>
+#include "perf/perf.h"
 #include "field/field.h"
 #include "renderer/renderer.h"
 #include "physics/physics.h"
@@ -19,21 +20,12 @@ int main(void) {
     Field* field = new Field();
 
     while (1) {
-        swiWaitForVBlank();
+        Perf::startFrame();
         field->update();
         field->draw();
-
-        // if (keysDown() & KEY_A && ball->state == FootballState::HIDDEN) {
-            // ball->startX = qb->x;
-            // ball->startY = qb->y;
-            // ball->x = qb->x;
-            // ball->y = qb->y;
-            // ball->destinationX = qb->x + (50 * Field::PIXELS_PER_YARD);
-            // ball->destinationY = qb->y;
-            // ball->speed = 3;
-            // ball->t = 0.0f;
-            // ball->state = FootballState::FLYING;
-        // }
+        Perf::endFrame();
+        Perf::draw();
+        swiWaitForVBlank();
     }
 
     return 0;
