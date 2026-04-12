@@ -15,6 +15,7 @@ int main(void) {
     vramSetBankA(VRAM_A_LCD);
     videoSetMode(MODE_FB0);
     videoSetModeSub(MODE_5_2D);
+    consoleDemoInit();
     Field* field = new Field();
 
     while (1) {

@@ -70,7 +70,7 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 ## Architecture
 
 - **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, and a `Football*` pointer. Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `PIXELS_PER_YARD` and `convertToPixelYards(float)` live in `utils.h`.
-- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors). `drawOffensePlayer(player, xOffset)` and `drawDefensePlayer(player, xOffset)` draw players in screen space. `drawField(scrollOffset, lineOfScrimmage, firstDown)` draws sidelines, scrolling 5-yard markers, and the two special lines. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
+- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors) and a static `backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT]`. All `drawRect` calls write to the backbuffer; `flush()` copies it to `VRAM_A` via `dmaCopy` at the end of each frame. `drawField(scrollOffset, lineOfScrimmage, firstDown)` fills the backbuffer with `FIELD_COLOR`, draws endzones, scrolling 5-yard markers, and the two special lines. Sidelines are drawn by `Field::draw()` after `drawField()`, before `flush()`. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
 - **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. No color field — colors are renderer concerns. OffensivePlayer has `hasBall` — when true, gates d-pad input in `runAI(Football*)`. DefensivePlayer has `hasBall` (default false) for fumble/interception possession; defense is never user-controlled.
 - **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
@@ -83,7 +83,7 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 - **Perspective**: top-down view of the field
 - **Top screen**: game field (framebuffer mode, VRAM bank A)
-- **Bottom screen**: black for now (MODE_5_2D, no layers enabled)
+- **Bottom screen**: debug console (`consoleDemoInit()`), MODE_5_2D
 - **Control**: d-pad moves the ball carrier; A throws the ball
 - **Field**: 120 yards total (10 endzone + 100 playing + 10 endzone), narrower than real life by design
 - **Goal**: get the logic working first — real control, real movement, real defense AI — before worrying about presentation polish

@@ -21,4 +21,5 @@ namespace Renderer {
     void drawOffensePlayer(OffensivePlayer* player, int xOffset);
     void drawDefensePlayer(DefensivePlayer* player, int xOffset);
     void drawField(int drawPosition, int lineOfScrimmage, int firstDown);
+    void flush();
 }
