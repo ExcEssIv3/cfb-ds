@@ -36,5 +36,5 @@ public:
     Field();
     void draw();
     void update();
-
+    void endPlay(int lineOfScrimmage, bool firstDown = false, bool touchdown = false, bool safety = false);
 };

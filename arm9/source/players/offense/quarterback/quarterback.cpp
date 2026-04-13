@@ -10,7 +10,7 @@ void Quarterback::runAI(Football* football, Player* ballCarrier) {
             if (keys & KEY_A) {
                 football->start = pos;
                 football->pos = pos;
-                football->destination = { pos.x + convertToPixelYards(50), pos.y };
+                football->destination = pos + Vector2{ (float)convertToPixelYards(50), 0 };
                 football->speed = 2;
                 football->t = 0.0f;
                 football->resetStatus();
