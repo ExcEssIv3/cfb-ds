@@ -4,6 +4,6 @@
 
 class OffensiveLine : public OffensivePlayer {
 public:
-    OffensiveLine(float x, float y, int size, float speed, bool hasBall)
-        : OffensivePlayer(x, y, size, speed, hasBall) {};
+    OffensiveLine(Vector2 pos, int size, float speed)
+        : OffensivePlayer(pos, size, speed, Position::OFFENSIVE_LINE) {};
 };

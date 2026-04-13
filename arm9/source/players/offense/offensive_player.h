@@ -5,10 +5,8 @@
 
 class OffensivePlayer : public Player {
 public:
-    bool hasBall;
+    OffensivePlayer(Vector2 pos, int size, float speed, Position position)
+        : Player(pos, size, speed, true, position) {};
 
-    OffensivePlayer(float x, float y, int size, float speed, bool hasBall)
-        : Player(x, y, size, speed), hasBall(hasBall) {};
-
-    virtual void runAI(Football* football);
+    void runAI(Football* football, Player* ballCarrier) override;
 };

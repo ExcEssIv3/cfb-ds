@@ -1,5 +1,6 @@
 #include "field.h"
 #include "../players/offense/quarterback/quarterback.h"
+#include "../players/defense/linebacker/linebacker.h"
 #include <cmath>
 #include "../renderer/renderer.h"
 #include <stdio.h>
@@ -9,27 +10,46 @@ Field::Field() {
         offense[i] = nullptr;
         defense[i] = nullptr;
     }
-    
+
     lineOfScrimmage = convertToPixelYards(25);
     drawPosition = lineOfScrimmage;
     firstDown = lineOfScrimmage + convertToPixelYards(10);
+    ballCarrier = nullptr;
 
     offense[0] = new Quarterback(
-        lineOfScrimmage - convertToPixelYards(5), DRAW_HEIGHT / 2 + TOP, 8, 3.0f, true
+        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 2.0f
     );
-    football = new Football (offense[0]->x, offense[0]->y);
+    offense[0]->setStatus(Player::Status::BALL_CARRIER);
+
+    defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 1.0f);
+    defense[0]->setStatus(Linebacker::Status::BLITZ);
+
+    football = new Football(offense[0]->pos);
 }
 
 void Field::update() {
     scanKeys();
 
+    ballCarrier = nullptr;
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        if (offense[i] != nullptr && offense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
+            ballCarrier = offense[i];
+            break;
+        }
+        if (defense[i] != nullptr && defense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
+            ballCarrier = defense[i];
+            break;
+        }
+    }
+
     for (int i = 0; i < PLAYER_COUNT; i++) {
         if (offense[i] != nullptr) {
-            offense[i]->runAI(football);
-            if (offense[i]->hasBall) drawPosition = (int)roundf(offense[i]->x);
+            offense[i]->runAI(football, ballCarrier);
+            if (offense[i]->hasStatus(Player::Status::BALL_CARRIER))
+                drawPosition = (int)roundf(offense[i]->pos.x);
         }
         if (defense[i] != nullptr) {
-            defense[i]->runAI(football);
+            defense[i]->runAI(football, ballCarrier);
         }
     }
     football->update();
@@ -46,7 +66,7 @@ void Field::draw() {
         }
     }
     if (football->state != FootballState::HIDDEN) {
-        Renderer::drawRect(football->x - (drawPosition - VIEWPORT_WIDTH / 4), football->y, football->drawSize, football->drawSize / 2, football->color);
+        Renderer::drawRect(football->pos.x - (drawPosition - VIEWPORT_WIDTH / 4), football->pos.y, football->drawSize, football->drawSize / 2, football->color);
     }
 
     // Sidelines drawn last so nothing else can overflow-bleed into them

@@ -2,25 +2,21 @@
 #include "quarterback.h"
 #include "../../../utils.h"
 
-void Quarterback::runAI(Football* football) {
-    OffensivePlayer::runAI(football);
-    if (hasBall) {
-        // if (football->state == FootballState::HIDDEN) {
-
+void Quarterback::runAI(Football* football, Player* ballCarrier) {
+    OffensivePlayer::runAI(football, ballCarrier);
+    if (hasStatus(Status::BALL_CARRIER)) {
+        if (football->state == FootballState::HIDDEN) {
             uint32_t keys = keysHeld();
             if (keys & KEY_A) {
-                football->startX = x;
-                football->startY = y;
-                football->x = x;
-                football->y = y;
-                football->destinationX = x + convertToPixelYards(50);
-                football->destinationY = y;
+                football->start = pos;
+                football->pos = pos;
+                football->destination = { pos.x + convertToPixelYards(50), pos.y };
                 football->speed = 2;
                 football->t = 0.0f;
                 football->state = FootballState::FLYING;
-                hasBall = false;
+                clearStatus(Status::BALL_CARRIER);
                 return;
             }
-        // }
+        }
     }
 }

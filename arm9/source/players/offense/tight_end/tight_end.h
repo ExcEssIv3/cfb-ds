@@ -4,6 +4,6 @@
 
 class TightEnd : public OffensivePlayer {
 public:
-    TightEnd(float x, float y, int size, float speed, bool hasBall)
-        : OffensivePlayer(x, y, size, speed, hasBall) {};
+    TightEnd(Vector2 pos, int size, float speed)
+        : OffensivePlayer(pos, size, speed, Position::TIGHT_END) {};
 };

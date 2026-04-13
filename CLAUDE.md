@@ -48,18 +48,18 @@ cfb/
         ├── renderer/     # Renderer namespace — drawRect(), drawOffensePlayer(), drawDefensePlayer(), drawField(), flush()
         ├── perf/         # Perf namespace — startFrame(), endFrame(), draw(); FPS/ms/heap stats on bottom screen
         └── players/
-            ├── player.h/cpp          # Base Player — position, speed, move(), goTo()
+            ├── player.h/cpp          # Base Player — pos, speed, statusFlags, move(), goTo(), runAI()
             ├── offense/
-            │   ├── offensive_player  # OffensivePlayer — d-pad input, hasBall
+            │   ├── offensive_player  # OffensivePlayer — d-pad input when BALL_CARRIER
             │   ├── quarterback/
             │   ├── running_back/
             │   ├── wide_receiver/
             │   ├── tight_end/
             │   └── offensive_line/
             └── defense/
-                ├── defensive_player  # DefensivePlayer — runAI() stub, hasBall
+                ├── defensive_player  # DefensivePlayer — runAI() delegates to Player base
                 ├── cornerback/
-                ├── linebacker/
+                ├── linebacker/       # Linebacker::Status — ZONE_COVERAGE, MAN_COVERAGE, BLITZ (bits 8-10)
                 ├── safety/
                 └── defensive_line/
 ```
@@ -70,11 +70,12 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 ## Architecture
 
-- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, and a `Football*` pointer. Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `PIXELS_PER_YARD` and `convertToPixelYards(float)` live in `utils.h`.
+- **Field** — owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, a `Football*` pointer, and a `Player* ballCarrier` (resolved each frame before AI runs). Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `PIXELS_PER_YARD` and `convertToPixelYards(float)` live in `utils.h`.
 - **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors) and a static `backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT]`. All `drawRect` calls write to the backbuffer; `flush()` copies it to `VRAM_A` via `dmaCopy` at the end of each frame. `drawField(scrollOffset, lineOfScrimmage, firstDown)` fills the backbuffer with `FIELD_COLOR`, draws endzones, scrolling 5-yard markers, and the two special lines. Sidelines are drawn by `Field::draw()` after `drawField()`, before `flush()`. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
-- **Player** — base class with `move(direction)` (angle-based) and `goTo(x, y)`. No color field — colors are renderer concerns. OffensivePlayer has `hasBall` — when true, gates d-pad input in `runAI(Football*)`. DefensivePlayer has `hasBall` (default false) for fumble/interception possession; defense is never user-controlled.
-- **Football** — HIDDEN/FLYING/FUMBLED state machine. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
+- **Player** — base class with `Vector2 pos`, `move(direction)` (angle-based), `goTo(Vector2)`, and a `uint16_t statusFlags` bitmask. All constructors take `Vector2 pos` instead of separate x/y. `runAI(Football*, Player* ballCarrier)` is virtual — base handles fumble pickup, subclasses override for position-specific behavior. `isOffense` and `position` (a `Position` enum) are set at construction and hardcoded per side. No color field — colors are renderer concerns. `hasBall` is gone — ball possession is tracked via `Player::Status::BALL_CARRIER` (bit 0) in `statusFlags`. Position-specific statuses use bits 8–15 (e.g. `Linebacker::Status`). Status methods are templated on `Player` to accept any `enum class` without explicit casting.
+- **Football** — HIDDEN/FLYING/FUMBLED state machine. Uses `Vector2 pos`, `start`, and `destination` instead of separate int fields. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
+- **Vector2** — `struct Vector2 { float x, y; }` defined in `utils.h` alongside `angleTo(a, b)` and `distanceTo(a, b)` free functions. Used for all player and football positions.
 
 ## Units
 

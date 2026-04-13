@@ -5,8 +5,8 @@
 class Quarterback : public OffensivePlayer {
 public:
 
-    Quarterback(float x, float y, int size, float speed, bool hasBall)
-        : OffensivePlayer(x, y, size, speed, hasBall) {};
+    Quarterback(Vector2 pos, int size, float speed)
+        : OffensivePlayer(pos, size, speed, Position::QUARTERBACK) {};
 
-    void runAI(Football* football) override;
+    void runAI(Football* football, Player* ballCarrier) override;
 };

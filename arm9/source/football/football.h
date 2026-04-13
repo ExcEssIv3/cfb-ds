@@ -1,17 +1,15 @@
 #pragma once
 
 #include <nds.h>
+#include "../utils.h"
 
 enum class FootballState { HIDDEN, FLYING, FUMBLED };
 
 class Football {
     public:
-        float x;
-        float y;
-        int startX;
-        int startY;
-        int destinationX;
-        int destinationY;
+        Vector2 pos;
+        Vector2 start;
+        Vector2 destination;
         FootballState state = FootballState::HIDDEN;
         float speed = 10.0f;
         float t = 0.0f; // tracks travel
@@ -19,8 +17,8 @@ class Football {
         int size = 4;
         int drawSize = size;
 
-        Football(float x, float y)
-            : x(x), y(y), startX(x), startY(y), destinationX(x), destinationY(y) {};
+        Football(Vector2 pos)
+            : pos(pos), start(pos), destination(pos) {};
 
         void update();
 };

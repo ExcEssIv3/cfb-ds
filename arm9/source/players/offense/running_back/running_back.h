@@ -4,6 +4,6 @@
 
 class RunningBack : public OffensivePlayer {
 public:
-    RunningBack(float x, float y, int size, float speed, bool hasBall)
-        : OffensivePlayer(x, y, size, speed, hasBall) {};
+    RunningBack(Vector2 pos, int size, float speed)
+        : OffensivePlayer(pos, size, speed, Position::RUNNING_BACK) {};
 };

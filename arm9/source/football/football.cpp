@@ -5,21 +5,20 @@
 void Football::update() {
     switch(this->state) {
         case FootballState::FLYING: {
-            float xDistance = destinationX - startX; // distance to be traveled from start in x direction
-            float yDistance = destinationY - startY; // distance to be traveled from start in y direction
-            float dx = x - startX; // change in x
-            float dy = y - startY; // change in y
+            float xDistance = destination.x - start.x;
+            float yDistance = destination.y - start.y;
+            float dx = pos.x - start.x;
+            float dy = pos.y - start.y;
             float totalDistance = hypotf(xDistance, yDistance);
 
             t += speed / totalDistance;
 
             if (t >= 1.0f) {
                 t = 1.0f;
-                x = destinationX;
-                y = destinationY;
+                pos = destination;
             } else {
-                x = t * xDistance + startX;
-                y = t * yDistance + startY;
+                pos.x = t * xDistance + start.x;
+                pos.y = t * yDistance + start.y;
             }
 
             // Calculating height

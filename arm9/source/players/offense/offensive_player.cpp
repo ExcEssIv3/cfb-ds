@@ -7,8 +7,9 @@
 #define M_PI 3.14159265358979323846
 #endif
 
-void OffensivePlayer::runAI(Football* football) {
-    if (hasBall) {
+void OffensivePlayer::runAI(Football* football, Player* ballCarrier) {
+    Player::runAI(football, ballCarrier);
+    if (hasStatus(Status::BALL_CARRIER)) {
         uint32_t keys = keysHeld();
         if(keys & KEY_UP) {
             if (keys & KEY_RIGHT) {

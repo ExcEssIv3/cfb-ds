@@ -26,6 +26,7 @@ public:
     OffensivePlayer* offense[PLAYER_COUNT];
     DefensivePlayer* defense[PLAYER_COUNT];
     Football* football;
+    Player* ballCarrier;
 
     Field();
     void draw();

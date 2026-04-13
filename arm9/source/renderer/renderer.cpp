@@ -42,14 +42,14 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
 }
 
 void Renderer::drawOffensePlayer(OffensivePlayer* player, int xOffset = 0) {
-    int drawX = (int)roundf(player->x )- xOffset;
-    int drawY = (int)roundf(player->y);
+    int drawX = (int)roundf(player->pos.x) - xOffset;
+    int drawY = (int)roundf(player->pos.y);
     Renderer::drawRect(drawX, drawY, player->size / 2, player->size, OFFENSE_COLOR);
 }
 
 void Renderer::drawDefensePlayer(DefensivePlayer* player, int xOffset = 0) {
-    int drawX = (int)roundf(player->x) - xOffset;
-    int drawY = (int)roundf(player->y);
+    int drawX = (int)roundf(player->pos.x) - xOffset;
+    int drawY = (int)roundf(player->pos.y);
     Renderer::drawRect(drawX, drawY, player->size / 2, player->size, DEFENSE_COLOR);
 }
 

@@ -4,6 +4,6 @@
 
 class Cornerback : public DefensivePlayer {
 public:
-    Cornerback(float x, float y, int size, float speed)
-        : DefensivePlayer(x, y, size, speed) {};
+    Cornerback(Vector2 pos, int size, float speed)
+        : DefensivePlayer(pos, size, speed, Position::CORNERBACK) {};
 };

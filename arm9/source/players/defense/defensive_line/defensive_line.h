@@ -4,6 +4,6 @@
 
 class DefensiveLine : public DefensivePlayer {
 public:
-    DefensiveLine(float x, float y, int size, float speed)
-        : DefensivePlayer(x, y, size, speed) {};
+    DefensiveLine(Vector2 pos, int size, float speed)
+        : DefensivePlayer(pos, size, speed, Position::DEFENSIVE_LINE) {};
 };

@@ -1,30 +1,43 @@
 #include <nds.h>
 #include <cmath>
 #include "player.h"
+#include "../football/football.h"
 
 Player::Player(
-    float x,
-    float y,
+    Vector2 pos,
     int size,
-    float speed
-) : x(x), y(y), size(size), speed(speed) {}
+    float speed,
+    bool isOffense,
+    Position position,
+    uint16_t statusFlags
+) : pos(pos), size(size), speed(speed), isOffense(isOffense), position(position), statusFlags(statusFlags) {}
+
+void Player::runAI(Football* football, Player* ballCarrier) {
+    if (football->state == FootballState::FUMBLED) {
+        if (distanceTo(pos, football->pos) < speed) {
+            pos = football->pos;
+            football->state = FootballState::HIDDEN;
+            setStatus(Status::BALL_CARRIER);
+        } else {
+            goTo(football->pos);
+        }
+    }
+}
 
 void Player::move(float direction) {
-    x += cosf(direction) * speed;
-    y += sinf(direction) * speed;
+    pos.x += cosf(direction) * speed;
+    pos.y += sinf(direction) * speed;
 }
 
-void Player::goTo(float gx, float gy) {
-    float xDelta = gx - x;
-    float yDelta = gy - y;
-    float distance = sqrtf(xDelta * xDelta + yDelta * yDelta);
+void Player::goTo(Vector2 target) {
+    float distance = distanceTo(pos, target);
 
     if (distance < speed) {
-        x = gx;
-        y = gy;
+        pos = target;
         return;
     }
-    
-    float angle = atan2f(yDelta, xDelta);
-    move(angle);
+
+    move(angleTo(pos, target));
 }
+
+void Player::resetStatus() { statusFlags = 0; }
