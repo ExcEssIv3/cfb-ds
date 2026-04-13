@@ -65,7 +65,7 @@ void Field::draw() {
             Renderer::drawDefensePlayer(defense[i], drawPosition - VIEWPORT_WIDTH / 4);
         }
     }
-    if (football->state != FootballState::HIDDEN) {
+    if (!football->hasStatus(Football::Status::HIDDEN)) {
         Renderer::drawRect(football->pos.x - (drawPosition - VIEWPORT_WIDTH / 4), football->pos.y, football->drawSize, football->drawSize / 2, football->color);
     }
 

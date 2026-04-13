@@ -2,10 +2,11 @@
 
 #include <nds.h>
 #include "../utils.h"
+#include "../status_mixin.h"
 
 class Football;
 
-class Player {
+class Player : public StatusMixin {
 public:
     enum class Position : uint8_t {
         QUARTERBACK,
@@ -29,14 +30,9 @@ public:
     float speed;
     bool isOffense;
     Position position;
-    uint16_t statusFlags;
 
     Player(Vector2 pos, int size, float speed, bool isOffense, Position position, uint16_t statusFlags = 0);
     virtual void runAI(Football* football, Player* ballCarrier);
     void move(float direction);
     void goTo(Vector2 target);
-    template<typename T> void setStatus(T flag)   { statusFlags |=  static_cast<uint16_t>(flag); }
-    template<typename T> void clearStatus(T flag) { statusFlags &= ~static_cast<uint16_t>(flag); }
-    template<typename T> bool hasStatus(T flag)   { return statusFlags & static_cast<uint16_t>(flag); }
-    void resetStatus();
 };

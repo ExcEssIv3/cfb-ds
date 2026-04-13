@@ -10,13 +10,16 @@ Player::Player(
     bool isOffense,
     Position position,
     uint16_t statusFlags
-) : pos(pos), size(size), speed(speed), isOffense(isOffense), position(position), statusFlags(statusFlags) {}
+) : pos(pos), size(size), speed(speed), isOffense(isOffense), position(position) {
+    this->statusFlags = statusFlags;
+}
 
 void Player::runAI(Football* football, Player* ballCarrier) {
-    if (football->state == FootballState::FUMBLED) {
+    if (football->hasStatus(Football::Status::FUMBLED)) {
         if (distanceTo(pos, football->pos) < speed) {
             pos = football->pos;
-            football->state = FootballState::HIDDEN;
+            football->resetStatus();
+            football->setStatus(Football::Status::HIDDEN);
             setStatus(Status::BALL_CARRIER);
         } else {
             goTo(football->pos);
@@ -40,4 +43,3 @@ void Player::goTo(Vector2 target) {
     move(angleTo(pos, target));
 }
 
-void Player::resetStatus() { statusFlags = 0; }

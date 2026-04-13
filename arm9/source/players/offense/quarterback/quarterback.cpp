@@ -5,7 +5,7 @@
 void Quarterback::runAI(Football* football, Player* ballCarrier) {
     OffensivePlayer::runAI(football, ballCarrier);
     if (hasStatus(Status::BALL_CARRIER)) {
-        if (football->state == FootballState::HIDDEN) {
+        if (football->hasStatus(Football::Status::HIDDEN)) {
             uint32_t keys = keysHeld();
             if (keys & KEY_A) {
                 football->start = pos;
@@ -13,7 +13,8 @@ void Quarterback::runAI(Football* football, Player* ballCarrier) {
                 football->destination = { pos.x + convertToPixelYards(50), pos.y };
                 football->speed = 2;
                 football->t = 0.0f;
-                football->state = FootballState::FLYING;
+                football->resetStatus();
+                football->setStatus(Football::Status::FLYING);
                 clearStatus(Status::BALL_CARRIER);
                 return;
             }

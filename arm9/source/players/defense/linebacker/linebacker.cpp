@@ -3,8 +3,8 @@
 
 void Linebacker::runAI(Football* football, Player* ballCarrier) {
     DefensivePlayer::runAI(football, ballCarrier);
-    if (football->state != FootballState::FUMBLED) {
-        if (football->state == FootballState::FLYING) {
+    if (!football->hasStatus(Football::Status::FUMBLED)) {
+        if (football->hasStatus(Football::Status::FLYING)) {
             // TODO: Try to intercept if possible
             goTo(football->destination);
         } else {
