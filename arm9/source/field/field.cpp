@@ -218,6 +218,4 @@ void Field::draw() {
                buttonGfxPtrs[sprIdx], -1, false, hide, false, false, false);
     }
     oamUpdate(&oamMain);
-
-    Renderer::flush();
 }

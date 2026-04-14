@@ -28,12 +28,13 @@ int main(void) {
     Field* field = new Field();
 
     while (1) {
+        swiWaitForVBlank();
+        Renderer::flush();
         Perf::startFrame();
         field->update();
         field->draw();
         Perf::endFrame();
         Perf::draw();
-        swiWaitForVBlank();
     }
 
     return 0;
