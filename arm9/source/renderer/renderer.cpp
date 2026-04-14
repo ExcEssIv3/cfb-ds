@@ -3,7 +3,12 @@
 #include <stdio.h>
 #include <cmath>
 
+static u16* bgGfxPtr = nullptr;
 static uint16_t backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT];
+
+void Renderer::init(u16* gfxPtr) {
+    bgGfxPtr = gfxPtr;
+}
 
 void Renderer::drawRect(int x, int y, int w, int h, uint16_t color) {
     int x0 = x < 0 ? 0 : x;
@@ -16,9 +21,7 @@ void Renderer::drawRect(int x, int y, int w, int h, uint16_t color) {
 }
 
 void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
-    for(int i = 0; i < VIEWPORT_HEIGHT * VIEWPORT_WIDTH; i++) {
-        backbuffer[i] = FIELD_COLOR;
-    }
+    dmaFillHalfWords(FIELD_COLOR, backbuffer, VIEWPORT_WIDTH * VIEWPORT_HEIGHT * 2);
 
     int firstLine = (int)ceil(drawPosition / (5.0 * PIXELS_PER_YARD));
     if (firstLine < 1) {
@@ -54,5 +57,5 @@ void Renderer::drawDefensePlayer(DefensivePlayer* player, int xOffset = 0) {
 }
 
 void Renderer::flush() {
-    dmaCopy(backbuffer, VRAM_A, VIEWPORT_WIDTH * VIEWPORT_HEIGHT * 2);
+    dmaCopy(backbuffer, bgGfxPtr, VIEWPORT_WIDTH * VIEWPORT_HEIGHT * 2);
 }

@@ -4,6 +4,7 @@
 #include "../screen.h"
 #include "../utils.h"
 #include "../status_mixin.h"
+#include "../game_context.h"
 #include "../players/offense/offensive_player.h"
 #include "../players/defense/defensive_player.h"
 #include "../football/football.h"
@@ -27,6 +28,9 @@ public:
     int drawPosition;
     int lineOfScrimmage;
     int firstDown;
+
+    OffensivePlayContext offensePlay;
+    u16* buttonGfxPtrs[5];
 
     OffensivePlayer* offense[PLAYER_COUNT];
     DefensivePlayer* defense[PLAYER_COUNT];

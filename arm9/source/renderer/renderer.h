@@ -6,17 +6,18 @@
 #include "../players/defense/defensive_player.h"
 
 // Field / line colors
-#define FIELD_COLOR             RGB15(14, 21, 7)
-#define SIDELINE_COLOR          RGB15(31, 31, 31)
-#define LINE_COLOR              RGB15(31, 31, 31)
-#define LINE_OF_SCRIMMAGE_COLOR RGB15(0, 0, 31)
-#define FIRST_DOWN_COLOR        RGB15(31, 31, 0)
+#define FIELD_COLOR             (RGB15(14, 21, 7)  | BIT(15))
+#define SIDELINE_COLOR          (RGB15(31, 31, 31) | BIT(15))
+#define LINE_COLOR              (RGB15(31, 31, 31) | BIT(15))
+#define LINE_OF_SCRIMMAGE_COLOR (RGB15(0, 0, 31)   | BIT(15))
+#define FIRST_DOWN_COLOR        (RGB15(31, 31, 0)  | BIT(15))
 
 // Player colors
-#define OFFENSE_COLOR           RGB15(0, 0, 31)
-#define DEFENSE_COLOR           RGB15(31, 0, 0)
+#define OFFENSE_COLOR           (RGB15(0, 0, 31)   | BIT(15))
+#define DEFENSE_COLOR           (RGB15(31, 0, 0)   | BIT(15))
 
 namespace Renderer {
+    void init(u16* gfxPtr);
     void drawRect(int x, int y, int w, int h, uint16_t color);
     void drawOffensePlayer(OffensivePlayer* player, int xOffset);
     void drawDefensePlayer(DefensivePlayer* player, int xOffset);
