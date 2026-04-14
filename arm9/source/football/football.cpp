@@ -22,6 +22,7 @@ void Football::update() {
 
         // Calculating height
         // height = [gravity * deltaX * (xFinal - deltaX)]/(2 * xVelocity ^ 2)
+        // TODO: include QB height
 
         float distanceTraveled = hypotf(dx, dy);
         float gravity = 5; // will have to change this value

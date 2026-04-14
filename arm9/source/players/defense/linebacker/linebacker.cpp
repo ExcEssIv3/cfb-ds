@@ -1,16 +1,16 @@
 #include "linebacker.h"
 #include "../../../football/football.h"
 
-void Linebacker::runAI(Football* football, Player* ballCarrier) {
-    DefensivePlayer::runAI(football, ballCarrier);
-    if (!football->hasStatus(Football::Status::FUMBLED)) {
-        if (football->hasStatus(Football::Status::FLYING)) {
+void Linebacker::runAI(const GameContext& ctx) {
+    DefensivePlayer::runAI(ctx);
+    if (!ctx.football->hasStatus(Football::Status::FUMBLED)) {
+        if (ctx.football->hasStatus(Football::Status::FLYING)) {
             // TODO: Try to intercept if possible
-            goTo(football->destination);
+            goTo(ctx.football->destination);
         } else {
-            if (ballCarrier->position == Player::Position::QUARTERBACK) {
+            if (ctx.ballCarrier->position == Player::Position::QUARTERBACK) {
                 if (hasStatus(Linebacker::Status::BLITZ)) {
-                    goTo(ballCarrier->pos);
+                    goTo(ctx.ballCarrier->pos);
                 } else if (hasStatus(Linebacker::Status::MAN_COVERAGE)) {
                     // TODO: implement coverages
                     return;
@@ -22,8 +22,8 @@ void Linebacker::runAI(Football* football, Player* ballCarrier) {
                     // TODO: implement error handling
                     return;
                 }
-            } else if (ballCarrier->isOffense) {
-                goTo(ballCarrier->pos);
+            } else if (ctx.ballCarrier->isOffense) {
+                goTo(ctx.ballCarrier->pos);
                 // TODO: implement tackling
                 return;
             } else {

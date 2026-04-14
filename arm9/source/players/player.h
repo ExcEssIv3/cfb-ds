@@ -3,8 +3,7 @@
 #include <nds.h>
 #include "../utils.h"
 #include "../status_mixin.h"
-
-class Football;
+#include "../game_context.h"
 
 class Player : public StatusMixin {
 public:
@@ -32,7 +31,7 @@ public:
     Position position;
 
     Player(Vector2 pos, int size, float speed, bool isOffense, Position position, uint16_t statusFlags = 0);
-    virtual void runAI(Football* football, Player* ballCarrier);
+    virtual void runAI(const GameContext& ctx);
     void move(float direction);
     void goTo(Vector2 target);
 };

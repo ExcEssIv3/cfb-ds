@@ -14,5 +14,5 @@ public:
     Linebacker(Vector2 pos, int size, float speed)
         : DefensivePlayer(pos, size, speed, Position::LINEBACKER) {};
 
-    void runAI(Football* football, Player* ballCarrier);
+    void runAI(const GameContext& ctx) override;
 };

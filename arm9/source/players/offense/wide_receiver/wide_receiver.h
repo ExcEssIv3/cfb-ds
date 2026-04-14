@@ -4,6 +4,9 @@
 
 class WideReceiver : public OffensivePlayer {
 public:
-    WideReceiver(Vector2 pos, int size, float speed)
-        : OffensivePlayer(pos, size, speed, Position::WIDE_RECEIVER) {};
+    uint32_t button;
+    WideReceiver(Vector2 pos, int size, float speed, uint32_t button)
+        : OffensivePlayer(pos, size, speed, Position::WIDE_RECEIVER), button(button) {};
+
+    void runAI(const GameContext& ctx) override;
 };

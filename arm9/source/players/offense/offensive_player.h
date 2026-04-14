@@ -8,5 +8,5 @@ public:
     OffensivePlayer(Vector2 pos, int size, float speed, Position position)
         : Player(pos, size, speed, true, position) {};
 
-    void runAI(Football* football, Player* ballCarrier) override;
+    void runAI(const GameContext& ctx) override;
 };

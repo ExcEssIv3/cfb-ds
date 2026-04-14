@@ -2,6 +2,7 @@
 #include <cmath>
 #include "player.h"
 #include "../football/football.h"
+#include "../game_context.h"
 
 Player::Player(
     Vector2 pos,
@@ -14,15 +15,15 @@ Player::Player(
     this->statusFlags = statusFlags;
 }
 
-void Player::runAI(Football* football, Player* ballCarrier) {
-    if (football->hasStatus(Football::Status::FUMBLED)) {
-        if (distanceTo(pos, football->pos) < speed) {
-            pos = football->pos;
-            football->resetStatus();
-            football->setStatus(Football::Status::HIDDEN);
+void Player::runAI(const GameContext& ctx) {
+    if (ctx.football->hasStatus(Football::Status::FUMBLED)) {
+        if (distanceTo(pos, ctx.football->pos) < speed) {
+            pos = ctx.football->pos;
+            ctx.football->resetStatus();
+            ctx.football->setStatus(Football::Status::HIDDEN);
             setStatus(Status::BALL_CARRIER);
         } else {
-            goTo(football->pos);
+            goTo(ctx.football->pos);
         }
     }
 }
