@@ -7,6 +7,4 @@ public:
 
     Quarterback(Vector2 pos, int size, float speed)
         : OffensivePlayer(pos, size, speed, Position::QUARTERBACK) {};
-
-    void runAI(const GameContext& ctx) override;
 };

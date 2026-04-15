@@ -3,6 +3,7 @@
 #include "player.h"
 #include "../football/football.h"
 #include "../game_context.h"
+#include "../behaviors/behavior.h"
 
 Player::Player(
     Vector2 pos,
@@ -10,8 +11,9 @@ Player::Player(
     float speed,
     bool isOffense,
     Position position,
+    float catchRadius,
     uint16_t statusFlags
-) : pos(pos), size(size), speed(speed), isOffense(isOffense), position(position) {
+) : pos(pos), size(size), speed(speed), catchRadius(catchRadius), isOffense(isOffense), position(position) {
     this->statusFlags = statusFlags;
 }
 
@@ -25,6 +27,11 @@ void Player::runAI(const GameContext& ctx) {
         } else {
             goTo(ctx.football->pos);
         }
+        return;
+    }
+
+    if (behavior != nullptr) {
+        behavior->update(this, ctx);
     }
 }
 

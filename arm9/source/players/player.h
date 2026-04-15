@@ -5,6 +5,8 @@
 #include "../status_mixin.h"
 #include "../game_context.h"
 
+struct Behavior;
+
 class Player : public StatusMixin {
 public:
     enum class Position : uint8_t {
@@ -27,10 +29,12 @@ public:
     Vector2 pos;
     int size;
     float speed;
+    float catchRadius;
     bool isOffense;
     Position position;
+    Behavior* behavior = nullptr;
 
-    Player(Vector2 pos, int size, float speed, bool isOffense, Position position, uint16_t statusFlags = 0);
+    Player(Vector2 pos, int size, float speed, bool isOffense, Position position, float catchRadius = 0.0f, uint16_t statusFlags = 0);
     virtual void runAI(const GameContext& ctx);
     void move(float direction);
     void goTo(Vector2 target);

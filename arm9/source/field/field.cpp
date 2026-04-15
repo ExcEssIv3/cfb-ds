@@ -6,6 +6,13 @@
 #include <cmath>
 #include "../renderer/renderer.h"
 #include <stdio.h>
+#include "../behaviors/offensiveBehaviors/ballCarrier/throwing_ball_carrier.h"
+#include "../behaviors/offensiveBehaviors/route_runner.h"
+#include "../behaviors/defensiveBehaviors/blitz.h"
+
+static ThrowingBallCarrier throwingBallCarrierBehavior;
+static RouteRunner routeRunnerBehavior;
+static Blitz blitzBehavior;
 #include "button_a.h"
 #include "button_b.h"
 #include "button_x.h"
@@ -57,7 +64,6 @@ Field::Field() {
     // DEFENSE
 
     defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f);
-    defense[0]->setStatus(Linebacker::Status::BLITZ);
 
     football = new Football(offense[0]->pos);
 
@@ -116,6 +122,14 @@ void Field::update() {
         if (keys & KEY_L) {
             clearStatus(Field::Status::PRESNAP);
             setStatus(Field::Status::IN_PLAY);
+
+            offense[0]->behavior = &throwingBallCarrierBehavior;
+            for (int i = 1; i < PLAYER_COUNT; i++) {
+                if (offense[i] != nullptr) offense[i]->behavior = &routeRunnerBehavior;
+            }
+            for (int i = 0; i < PLAYER_COUNT; i++) {
+                if (defense[i] != nullptr) defense[i]->behavior = &blitzBehavior;
+            }
         }
     } else if (hasStatus(Field::Status::IN_PLAY)) {
         football->update();
