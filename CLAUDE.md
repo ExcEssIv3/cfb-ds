@@ -89,7 +89,7 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 - **Perspective**: top-down view of the field
 - **Top screen**: game field (MODE_5_2D, BG2 16-bit bitmap on VRAM bank A, OAM sprites on VRAM bank B)
 - **Bottom screen**: debug console (`consoleDemoInit()`), MODE_5_2D
-- **Control**: d-pad moves the ball carrier; A throws the ball
+- **Control**: d-pad moves the ball carrier; L snaps the ball; A/B/X/R throws to the assigned receiver (QB leads the pass using interceptPoint on the receiver's route)
 - **Field**: 120 yards total (10 endzone + 100 playing + 10 endzone), narrower than real life by design
 - **Goal**: get the logic working first — real control, real movement, real defense AI — before worrying about presentation polish
 

@@ -39,24 +39,24 @@ Field::Field() {
     // QB
 
     offense[0] = new Quarterback(
-        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 2.0f
+        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.7f
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
 
     // WR
 
     offense[1] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 2.0f, KEY_A
+        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, KEY_A
     );
     offense[2] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 2.0f, KEY_B
+        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, KEY_B
     );
     offense[3] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 2.0f, KEY_X
+        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, KEY_X
     );
     // DEFENSE
 
-    defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 1.0f);
+    defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f);
     defense[0]->setStatus(Linebacker::Status::BLITZ);
 
     football = new Football(offense[0]->pos);
@@ -92,7 +92,7 @@ Field::Field() {
 
 void Field::update() {
     scanKeys();
-    uint32_t keys = keysHeld();
+    uint32_t keys = keysDown();
 
     ballCarrier = nullptr;
     if (football->hasStatus(Football::Status::HIDDEN)) {
@@ -113,7 +113,7 @@ void Field::update() {
     }
     if (hasStatus(Field::Status::PRESNAP)) {
         // TODO: implement play system
-        if (keys & KEY_B) {
+        if (keys & KEY_L) {
             clearStatus(Field::Status::PRESNAP);
             setStatus(Field::Status::IN_PLAY);
         }
