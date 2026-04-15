@@ -5,8 +5,10 @@
 class WideReceiver : public OffensivePlayer {
 public:
     uint32_t button;
-    WideReceiver(Vector2 pos, int size, float speed, uint32_t button)
-        : OffensivePlayer(pos, size, speed, Position::WIDE_RECEIVER), button(button) {};
+    float catchRadius;
+    WideReceiver(Vector2 pos, int size, float speed, uint32_t button, float catchRadius)
+        : OffensivePlayer(pos, size, speed, Position::WIDE_RECEIVER), button(button), catchRadius(catchRadius) {};
 
     void runAI(const GameContext& ctx) override;
+    bool catchable(const Vector2& ballPos);
 };

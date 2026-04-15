@@ -41,27 +41,27 @@ inline float dotProduct(const Vector2& a, const Vector2& b) {
     return a.x * b.x + a.y * b.y;
 }
 
-inline Vector2 interceptPoint(const Vector2& footballPos, const Vector2& destination, float footballSpeed, const Vector2& receiverPos, float receiverSpeed) {
-    Vector2 footballTravelDistance = { destination.x - footballPos.x, destination.y - footballPos.y};
-    float len = distanceTo(footballPos, destination);
+inline Vector2 interceptPoint(const Vector2& targetPos, const Vector2& targetDest, float targetSpeed, const Vector2& pursuerPos, float pursuerSpeed) {
+    Vector2 targetTravel = { targetDest.x - targetPos.x, targetDest.y - targetPos.y };
+    float len = distanceTo(targetPos, targetDest);
 
-    Vector2 receiverFootballDistance = { footballPos.x - receiverPos.x, footballPos.y - receiverPos.y };
+    Vector2 separation = { targetPos.x - pursuerPos.x, targetPos.y - pursuerPos.y };
 
-    float dot = dotProduct(footballTravelDistance, receiverFootballDistance);
-    float receiverDistSquared = dotProduct(receiverFootballDistance, receiverFootballDistance);
+    float dot = dotProduct(targetTravel, separation);
+    float separationDistSquared = dotProduct(separation, separation);
 
-    float relativeSpeedFactor = (receiverSpeed / footballSpeed) * (receiverSpeed / footballSpeed) - 1.0f;
+    float relativeSpeedFactor = (pursuerSpeed / targetSpeed) * (pursuerSpeed / targetSpeed) - 1.0f;
 
     float time;
-    if (fabsf(relativeSpeedFactor) <0.0001f) {
+    if (fabsf(relativeSpeedFactor) < 0.0001f) {
         // speeds are equal, linear solution
         if (fabsf(dot) < 0.0001f) return { -1.0f, -1.0f };
-        time = -receiverDistSquared / (2.0f * dot);
+        time = -separationDistSquared / (2.0f * dot);
     } else {
         // solve quadratic
         float a = len * len * relativeSpeedFactor;
         float b = -2.0f * dot;
-        float c = -receiverDistSquared;
+        float c = -separationDistSquared;
         float discriminant = b * b - 4.0f * a * c;
         if (discriminant < 0.0f) return { -1.0f, -1.0f };
         time = (-b + sqrtf(discriminant)) / (2.0f * a);
@@ -70,5 +70,5 @@ inline Vector2 interceptPoint(const Vector2& footballPos, const Vector2& destina
     if (time < 0.0f) time = 0.0f;
     if (time > 1.0f) time = 1.0f;
 
-    return { footballPos.x + time * footballTravelDistance.x, footballPos.y + time * footballTravelDistance.y };
+    return { targetPos.x + time * targetTravel.x, targetPos.y + time * targetTravel.y };
 }

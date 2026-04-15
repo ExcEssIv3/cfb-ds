@@ -7,7 +7,7 @@ void Linebacker::runAI(const GameContext& ctx) {
         if (ctx.football->hasStatus(Football::Status::FLYING)) {
             // TODO: Try to intercept if possible
             goTo(ctx.football->destination);
-        } else {
+        } else if (ctx.ballCarrier != nullptr) {
             if (ctx.ballCarrier->position == Player::Position::QUARTERBACK) {
                 if (hasStatus(Linebacker::Status::BLITZ)) {
                     goTo(ctx.ballCarrier->pos);
@@ -19,7 +19,7 @@ void Linebacker::runAI(const GameContext& ctx) {
                     return;
                 } else {
                     // THIS SHOULD NEVER HAPPEN
-                    // TODO: implement error handling
+                    nocashMessage("Linebacker: no play status\n");
                     return;
                 }
             } else if (ctx.ballCarrier->isOffense) {
@@ -30,6 +30,9 @@ void Linebacker::runAI(const GameContext& ctx) {
                 // TODO: implement blocking
                 return;
             }
+        } else {
+            nocashMessage("Linebacker: ctx.ballCarrier is null\n");
+            return;
         }
     }
 

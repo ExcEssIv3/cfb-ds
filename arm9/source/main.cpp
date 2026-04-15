@@ -24,6 +24,7 @@ int main(void) {
     videoSetModeSub(MODE_5_2D);
     consoleDemoInit();
     REG_DISPCNT |= DISPLAY_BG2_ACTIVE;
+    defaultExceptionHandler();
 
     Field* field = new Field();
 

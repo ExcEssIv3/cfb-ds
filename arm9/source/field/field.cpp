@@ -46,13 +46,13 @@ Field::Field() {
     // WR
 
     offense[1] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, KEY_A
+        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, KEY_A, 0.5f
     );
     offense[2] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, KEY_B
+        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, KEY_B, 0.5f
     );
     offense[3] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, KEY_X
+        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, KEY_X, 0.5f
     );
     // DEFENSE
 
@@ -118,6 +118,7 @@ void Field::update() {
             setStatus(Field::Status::IN_PLAY);
         }
     } else if (hasStatus(Field::Status::IN_PLAY)) {
+        football->update();
         GameContext ctx { football, ballCarrier, PLAYER_COUNT, lineOfScrimmage, firstDown, offensePlay, {} };
         for (int i = 0; i < PLAYER_COUNT; i++) {
             if (offense[i] != nullptr) {
@@ -134,7 +135,6 @@ void Field::update() {
                 }
             }
         }
-        football->update();
 
         iprintf("PRESNAP:%d IN_PLAY:%d\n", hasStatus(Field::Status::PRESNAP), hasStatus(Field::Status::IN_PLAY));
 
@@ -182,6 +182,12 @@ void Field::endPlay(int lineOfScrimmage, bool firstDown, bool touchdown, bool sa
     for (int i = 1; i < PLAYER_COUNT; i++) {
         if (offense[i] != nullptr) {
             offense[i]->pos.x = (float)(this->lineOfScrimmage - 4);
+            offense[i]->clearStatus(Player::Status::BALL_CARRIER);
+        }
+    }
+    for (int i = 0; i < PLAYER_COUNT; i++) {
+        if (defense[i] != nullptr) {
+            defense[i]->clearStatus(Player::Status::BALL_CARRIER);
         }
     }
 }
