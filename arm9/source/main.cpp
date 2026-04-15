@@ -5,7 +5,6 @@
 #include "renderer/renderer.h"
 #include "physics/physics.h"
 #include "football/football.h"
-#include "players/offense/offensive_player.h"
 
 #define PLAYER_SIZE 10
 #define PLAYER_SPEED 1.0f

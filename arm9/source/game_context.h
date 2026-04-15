@@ -2,12 +2,11 @@
 
 #include <stdint.h>
 
-class OffensivePlayer;
 class Player;
 struct Football;
 
 struct PassCatcher {
-    OffensivePlayer* player;
+    Player* player;
     uint32_t button;
 };
 

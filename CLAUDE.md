@@ -59,20 +59,7 @@ cfb/
         │   └── defensiveBehaviors/
         │       └── blitz             # Blitz — chase ball carrier
         └── players/
-            ├── player.h/cpp          # Base Player — pos, speed, catchRadius, behavior*, move(), goTo(), runAI()
-            ├── offense/
-            │   ├── offensive_player  # OffensivePlayer — runAI() delegates to Player base
-            │   ├── quarterback/
-            │   ├── running_back/
-            │   ├── wide_receiver/
-            │   ├── tight_end/
-            │   └── offensive_line/
-            └── defense/
-                ├── defensive_player  # DefensivePlayer — runAI() delegates to Player base
-                ├── cornerback/
-                ├── linebacker/
-                ├── safety/
-                └── defensive_line/
+            └── player.h/cpp          # Player — pos, speed, catchRadius, isOffense, position, behavior*, move(), goTo(), runAI()
 ```
 
 The ARM7 CPU uses the pre-built `ds7_maine.elf` stub from devkitPro/calico (same as cfb-old), so there's no arm7/ source to maintain.
@@ -85,8 +72,7 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 - **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors); all color macros include `| BIT(15)` for the alpha bit required by `BgType_Bmp16`. Has a static `backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT]` and a `bgGfxPtr` set via `Renderer::init(u16*)`. All `drawRect` calls write to the backbuffer; `flush()` copies it to `bgGfxPtr` via `dmaCopy` at the end of each frame. `drawField` clears the backbuffer with `dmaFillHalfWords`. Sidelines are drawn by `Field::draw()` after `drawField()`, before `flush()`. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
 - **StatusMixin** — base class in `status_mixin.h` providing `uint16_t statusFlags` and templated `setStatus`/`clearStatus`/`hasStatus`/`resetStatus`. Inherited by `Player`, `Football`, and `Field`. Each class defines its own `Status` enum class; bits are logically independent per class.
 - **Behavior** — base struct in `behaviors/behavior.h` with a single pure virtual `update(Player* self, const GameContext& ctx)`. Concrete behaviors live under `behaviors/offensiveBehaviors/` and `behaviors/defensiveBehaviors/`. Stateless behaviors are exposed as singletons (e.g. `runningBallCarrierBehavior`). `Field` assigns behaviors to players at snap; behaviors can reassign `self->behavior` mid-play (e.g. `RouteRunner` switches to `RunningBallCarrier` on catch).
-- **Player** — inherits `StatusMixin`. Has `Vector2 pos`, `float catchRadius`, `Behavior* behavior`, `move(direction)` (angle-based), `goTo(Vector2)`. `runAI()` handles fumble pickup first (early return), then delegates to `behavior->update(this, ctx)` if a behavior is assigned. `isOffense` and `position` (a `Position` enum) are set at construction. Ball possession tracked via `Player::Status::BALL_CARRIER` (bit 0).
-- **WideReceiver** — `catchRadius` is now on `Player` base (passed up via `OffensivePlayer` constructor). No `runAI` override — behavior is assigned by `Field` at snap.
+- **Player** — inherits `StatusMixin`. Has `Vector2 pos`, `float catchRadius`, `bool isOffense`, `Position position`, `Behavior* behavior`, `move(direction)` (angle-based), `goTo(Vector2)`. `runAI()` handles fumble pickup first (early return), then delegates to `behavior->update(this, ctx)` if a behavior is assigned. Ball possession tracked via `Player::Status::BALL_CARRIER` (bit 0). No subclasses — all players are instantiated directly as `Player` with the appropriate `isOffense` and `Position` values. `Field` holds separate `Player* offense[]` and `Player* defense[]` arrays; `PassCatcher::player` is also `Player*`.
 - **Football** — inherits `StatusMixin`. `Football::Status`: `HIDDEN` (bit 0), `FLYING` (bit 1), `FUMBLED` (bit 2) — mutually exclusive, set one at a time. Uses `Vector2 pos`, `start`, and `destination`. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
 - **Field** — inherits `StatusMixin`. `Field::Status`: `PRESNAP` (bit 0), `IN_PLAY` (bit 1). Owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, a `Football*` pointer, a `Player* ballCarrier`, an `OffensivePlayContext offensePlay`, and `u16* buttonGfxPtrs[5]`. Allocates OAM sprite gfx and loads button tile/palette data in the constructor. `draw()` calls `oamSet`/`oamUpdate` to position button label sprites above each pass catcher before `flush()`. In `update()`, `football->update()` is called before player AI runs. `endPlay()` clears `BALL_CARRIER` status on all offense and defense players. At snap (KEY_L), assigns static behavior instances: QB → `ThrowingBallCarrier`, other offense → `RouteRunner`, defense → `Blitz`.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.

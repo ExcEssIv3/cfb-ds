@@ -5,8 +5,7 @@
 #include "../utils.h"
 #include "../status_mixin.h"
 #include "../game_context.h"
-#include "../players/offense/offensive_player.h"
-#include "../players/defense/defensive_player.h"
+#include "../players/player.h"
 #include "../football/football.h"
 
 class Field : public StatusMixin {
@@ -32,8 +31,8 @@ public:
     OffensivePlayContext offensePlay;
     u16* buttonGfxPtrs[5];
 
-    OffensivePlayer* offense[PLAYER_COUNT];
-    DefensivePlayer* defense[PLAYER_COUNT];
+    Player* offense[PLAYER_COUNT];
+    Player* defense[PLAYER_COUNT];
     Football* football;
     Player* ballCarrier;
 

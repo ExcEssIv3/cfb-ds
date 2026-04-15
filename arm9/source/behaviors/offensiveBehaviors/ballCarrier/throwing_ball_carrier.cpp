@@ -1,5 +1,4 @@
 #include "../../../players/player.h"
-#include "../../../players/offense/offensive_player.h"
 #include "../../../game_context.h"
 #include "../ball_carrier.h"
 #include "throwing_ball_carrier.h"

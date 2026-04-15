@@ -1,7 +1,4 @@
 #include "field.h"
-#include "../players/offense/quarterback/quarterback.h"
-#include "../players/offense/wide_receiver/wide_receiver.h"
-#include "../players/defense/linebacker/linebacker.h"
 #include "../game_context.h"
 #include <cmath>
 #include "../renderer/renderer.h"
@@ -45,25 +42,25 @@ Field::Field() {
 
     // QB
 
-    offense[0] = new Quarterback(
-        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.7f
+    offense[0] = new Player(
+        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.7f, true, Player::Position::QUARTERBACK
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
 
     // WR
 
-    offense[1] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, KEY_A, 0.5f
+    offense[1] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, true, Player::Position::WIDE_RECEIVER, 0.5f
     );
-    offense[2] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, KEY_B, 0.5f
+    offense[2] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, true, Player::Position::WIDE_RECEIVER, 0.5f
     );
-    offense[3] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, KEY_X, 0.5f
+    offense[3] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, true, Player::Position::WIDE_RECEIVER, 0.5f
     );
     // DEFENSE
 
-    defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f);
+    defense[0] = new Player({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f, false, Player::Position::LINEBACKER);
 
     football = new Football(offense[0]->pos);
 
