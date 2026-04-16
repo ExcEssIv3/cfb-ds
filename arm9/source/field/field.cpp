@@ -61,7 +61,7 @@ void Field::update() {
         for (int i = 0; i < roster->PLAYER_COUNT; i++) {
             if (roster->defense[i] != nullptr) {
                 roster->defense[i]->runAI(ctx);
-                if (ballCarrier != nullptr && roster->defense[i]->pos == ballCarrier->pos) {
+                if (ballCarrier != nullptr && roster->defense[i]->pos == ballCarrier->pos) { // TODO: better bounds detection
                     // TACKLE
                     // TODO: CALCULATE BREAK TACKLE
                     endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
@@ -69,7 +69,7 @@ void Field::update() {
             }
         }
 
-        iprintf("PRESNAP:%d IN_PLAY:%d\n", hasStatus(Field::Status::PRESNAP), hasStatus(Field::Status::IN_PLAY));
+        printf("PRESNAP:%d IN_PLAY:%d\n", hasStatus(Field::Status::PRESNAP), hasStatus(Field::Status::IN_PLAY));
 
         // PLAY END STATES
         if (football->hasStatus(Football::Status::FLYING) && football->pos == football->destination) endPlay(lineOfScrimmage);
@@ -89,8 +89,8 @@ void Field::endPlay(int lineOfScrimmage, bool firstDown, bool touchdown, bool sa
     setStatus(Field::Status::PRESNAP);
     for (int i = 0; i < 120; i++) {
         consoleClear();
-        iprintf("Play End Time: %d.%d\n", (120 - i) / 60, ((120 - i) % 60) / 6);
-        iprintf("First Down: %d Touchdown: %d\n", firstDown, touchdown);
+        printf("Play End Time: %d.%d\n", (120 - i) / 60, ((120 - i) % 60) / 6);
+        printf("First Down: %d Touchdown: %d\n", firstDown, touchdown);
         swiWaitForVBlank();
     }
 

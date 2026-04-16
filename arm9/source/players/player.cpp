@@ -17,7 +17,7 @@ Player::Player(
 
 void Player::runAI(const GameContext& ctx) {
     if (ctx.football->hasStatus(Football::Status::FUMBLED)) {
-        if (distanceTo(pos, ctx.football->pos) < stats.speed) {
+        if (distanceTo(pos, ctx.football->pos) < stats.topSpeed) {
             pos = ctx.football->pos;
             ctx.football->resetStatus();
             ctx.football->setStatus(Football::Status::HIDDEN);
@@ -25,27 +25,59 @@ void Player::runAI(const GameContext& ctx) {
         } else {
             goTo(ctx.football->pos);
         }
+        move();
         return;
     }
 
     if (behavior != nullptr) {
         behavior->update(this, ctx);
     }
+
+    move();
 }
 
-void Player::move(float direction) {
-    pos.x += cosf(direction) * stats.speed;
-    pos.y += sinf(direction) * stats.speed;
+void Player::move() {
+    pos = pos + velocity;
+}
+
+void Player::accelerate(float direction) {
+    Vector2 desired = { cosf(direction) * stats.topSpeed, sinf(direction) * stats.topSpeed };
+    Vector2 delta = desired - velocity;
+    float deltaMagnitude = magnitude(delta);
+
+    if (deltaMagnitude <= stats.acceleration) {
+        velocity = desired;
+    } else {
+        velocity.x += (delta.x / deltaMagnitude) * stats.acceleration;
+        velocity.y += (delta.y / deltaMagnitude) * stats.acceleration;
+    }
+}
+
+void Player::decelerate() {
+    Vector2 desired = {0, 0};
+    Vector2 delta = desired - velocity;
+    float deltaMagnitude = magnitude(delta);
+
+    if (deltaMagnitude <= stats.acceleration) {
+        velocity = desired;
+    } else {
+        velocity.x += (delta.x / deltaMagnitude) * stats.acceleration;
+        velocity.y += (delta.y / deltaMagnitude) * stats.acceleration;
+    }
 }
 
 void Player::goTo(Vector2 target) {
-    float distance = distanceTo(pos, target);
-
-    if (distance < stats.speed) {
+    float speed = magnitude(velocity);
+    float distance = distanceTo(pos, target); 
+    if (distance < stats.acceleration && speed < stats.acceleration) {
         pos = target;
+        velocity = {0, 0};
         return;
     }
 
-    move(angleTo(pos, target));
+    float stoppingDistance = (speed * speed) / (2 * stats.acceleration);
+    if (distance <= stoppingDistance) {
+        decelerate();
+    } else accelerate(angleTo(pos, target));
 }
 

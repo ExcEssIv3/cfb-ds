@@ -22,7 +22,7 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
                     ctx.football->destination,
                     ctx.football->speed,
                     self->pos,
-                    self->stats.speed
+                    self->stats.topSpeed
                 );
                 if (intercept.x == -1.0f && intercept.y == -1.0f) {
                     char buf[64];

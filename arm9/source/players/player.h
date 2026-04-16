@@ -31,10 +31,13 @@ public:
     bool isOffense;
     Position position;
     PlayerStats stats;
+    Vector2 velocity = { 0.0f, 0.0f };
     Behavior* behavior = nullptr;
 
     Player(Vector2 pos, bool isOffense, Position position, PlayerStats stats = {}, uint16_t statusFlags = 0);
     virtual void runAI(const GameContext& ctx);
-    void move(float direction);
+    void accelerate(float direction);
+    void decelerate();
+    void move();
     void goTo(Vector2 target);
 };

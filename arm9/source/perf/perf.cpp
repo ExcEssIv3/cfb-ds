@@ -16,7 +16,7 @@ void Perf::endFrame() {
 
 void Perf::draw() {
     struct mallinfo mi = mallinfo();
-    iprintf("\x1b[2J\x1b[0;0H");
-    iprintf("FPS: %d MS: %d\n", (int)fps, (int)ms);
-    iprintf("Alloc: %d Free: %d\n", (int)mi.uordblks, (int)mi.fordblks);
+    printf("\x1b[2J\x1b[0;0H");
+    printf("FPS: %d MS: %d\n", (int)fps, (int)ms);
+    printf("Alloc: %d Free: %d\n", (int)mi.uordblks, (int)mi.fordblks);
 }

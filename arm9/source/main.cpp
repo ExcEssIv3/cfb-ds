@@ -1,5 +1,6 @@
 #include <nds.h>
 #include <cmath>
+#include <cstdlib>
 #include "perf/perf.h"
 #include "field/field.h"
 #include "renderer/renderer.h"
@@ -24,6 +25,10 @@ int main(void) {
     consoleDemoInit();
     REG_DISPCNT |= DISPLAY_BG2_ACTIVE;
     defaultExceptionHandler();
+    
+    TIMER0_CR = TIMER_ENABLE | TIMER_DIV_1;
+    srand(TIMER0_DATA);
+    TIMER0_CR = 0;
 
     Field* field = new Field();
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <nds.h>
 #include <cmath>
 #include <stdio.h>
 
@@ -24,7 +25,7 @@ struct Vector2 {
     Vector2 operator+(const Vector2& other) const { return { x + other.x, y + other.y }; }
     Vector2 operator-(const Vector2& other) const { return { x - other.x, y - other.y }; }
 
-    void print() const { iprintf("(%d, %d)\n", (int)x, (int)y); }
+    void print() const { printf("(%d, %d)\n", (int)x, (int)y); }
 };
 
 inline float angleTo(const Vector2& a, const Vector2& b) {
@@ -39,6 +40,10 @@ inline float distanceTo(const Vector2& a, const Vector2& b) {
 
 inline float dotProduct(const Vector2& a, const Vector2& b) {
     return a.x * b.x + a.y * b.y;
+}
+
+inline float magnitude(const Vector2 v) {
+    return sqrtf(v.x * v.x + v.y * v.y);
 }
 
 inline Vector2 interceptPoint(const Vector2& targetPos, const Vector2& targetDest, float targetSpeed, const Vector2& pursuerPos, float pursuerSpeed) {
