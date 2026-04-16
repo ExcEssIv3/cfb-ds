@@ -43,24 +43,36 @@ Field::Field() {
     // QB
 
     offense[0] = new Player(
-        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.7f, true, Player::Position::QUARTERBACK
+        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
+        true, Player::Position::QUARTERBACK,
+        {5, 8, 0.7f, 0.15f}
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
 
     // WR
 
     offense[1] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, true, Player::Position::WIDE_RECEIVER, 0.5f
+        {(float)lineOfScrimmage - 4, (float)(TOP + 20)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.0f, 0.5f}
     );
     offense[2] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, true, Player::Position::WIDE_RECEIVER, 0.5f
+        {(float)lineOfScrimmage - 4, (float)(TOP + 40)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.2f, 0.5f}
     );
     offense[3] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, true, Player::Position::WIDE_RECEIVER, 0.5f
+        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.1f, 0.5f}
     );
     // DEFENSE
 
-    defense[0] = new Player({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f, false, Player::Position::LINEBACKER);
+    defense[0] = new Player(
+        {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
+        false, Player::Position::LINEBACKER,
+        {6, 7, 0.8f, 0.3f}
+    );
 
     football = new Football(offense[0]->pos);
 
@@ -153,9 +165,9 @@ void Field::update() {
         if (football->hasStatus(Football::Status::FLYING) && football->pos == football->destination) endPlay(lineOfScrimmage);
         if (ballCarrier != nullptr) {
             ballCarrier->pos.print();
-            if (ballCarrier->pos.y > BOTTOM - ballCarrier->size || ballCarrier->pos.y < TOP)
+            if (ballCarrier->pos.y > BOTTOM - ballCarrier->stats.height || ballCarrier->pos.y < TOP)
                 endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
-            if (ballCarrier->pos.x + ballCarrier->size / 2 > convertToPixelYards(100)) endPlay(convertToPixelYards(25), false, true);
+            if (ballCarrier->pos.x + ballCarrier->stats.width > convertToPixelYards(100)) endPlay(convertToPixelYards(25), false, true);
             if (ballCarrier->pos.x < convertToPixelYards(0)) endPlay(convertToPixelYards(25), false, false, true);
         }
         

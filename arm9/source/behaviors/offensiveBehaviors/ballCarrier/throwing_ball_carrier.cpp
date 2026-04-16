@@ -28,7 +28,7 @@ void ThrowingBallCarrier::update(Player *self, const GameContext& ctx)
                     Vector2 dest = interceptPoint(
                         ctx.offensePlay.passCatchers[i].player->pos,
                         { (float)convertToPixelYards(100), ctx.offensePlay.passCatchers[i].player->pos.y },
-                        ctx.offensePlay.passCatchers[i].player->speed,
+                        ctx.offensePlay.passCatchers[i].player->stats.speed,
                         self->pos,
                         ctx.football->speed
                     );
