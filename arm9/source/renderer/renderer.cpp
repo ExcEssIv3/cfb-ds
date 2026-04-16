@@ -44,16 +44,16 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
     drawRect(firstDown - drawPosition, Field::TOP, 1, Field::DRAW_HEIGHT, FIRST_DOWN_COLOR);
 }
 
-void Renderer::drawOffensePlayer(OffensivePlayer* player, int xOffset = 0) {
+void Renderer::drawOffensePlayer(Player* player, int xOffset = 0) {
     int drawX = (int)roundf(player->pos.x) - xOffset;
     int drawY = (int)roundf(player->pos.y);
-    Renderer::drawRect(drawX, drawY, player->size / 2, player->size, OFFENSE_COLOR);
+    Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, OFFENSE_COLOR);
 }
 
-void Renderer::drawDefensePlayer(DefensivePlayer* player, int xOffset = 0) {
+void Renderer::drawDefensePlayer(Player* player, int xOffset = 0) {
     int drawX = (int)roundf(player->pos.x) - xOffset;
     int drawY = (int)roundf(player->pos.y);
-    Renderer::drawRect(drawX, drawY, player->size / 2, player->size, DEFENSE_COLOR);
+    Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, DEFENSE_COLOR);
 }
 
 void Renderer::flush() {

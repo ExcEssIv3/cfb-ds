@@ -4,6 +4,9 @@
 #include "../utils.h"
 #include "../status_mixin.h"
 #include "../game_context.h"
+#include "player_stats.h"
+
+struct Behavior;
 
 class Player : public StatusMixin {
 public:
@@ -25,12 +28,12 @@ public:
     };
 
     Vector2 pos;
-    int size;
-    float speed;
     bool isOffense;
     Position position;
+    PlayerStats stats;
+    Behavior* behavior = nullptr;
 
-    Player(Vector2 pos, int size, float speed, bool isOffense, Position position, uint16_t statusFlags = 0);
+    Player(Vector2 pos, bool isOffense, Position position, PlayerStats stats = {}, uint16_t statusFlags = 0);
     virtual void runAI(const GameContext& ctx);
     void move(float direction);
     void goTo(Vector2 target);

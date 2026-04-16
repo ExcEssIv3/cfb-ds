@@ -2,8 +2,7 @@
 
 #include <nds.h>
 #include "../screen.h"
-#include "../players/offense/offensive_player.h"
-#include "../players/defense/defensive_player.h"
+#include "../players/player.h"
 
 // Field / line colors
 #define FIELD_COLOR             (RGB15(14, 21, 7)  | BIT(15))
@@ -19,8 +18,8 @@
 namespace Renderer {
     void init(u16* gfxPtr);
     void drawRect(int x, int y, int w, int h, uint16_t color);
-    void drawOffensePlayer(OffensivePlayer* player, int xOffset);
-    void drawDefensePlayer(DefensivePlayer* player, int xOffset);
+    void drawOffensePlayer(Player* player, int xOffset);
+    void drawDefensePlayer(Player* player, int xOffset);
     void drawField(int drawPosition, int lineOfScrimmage, int firstDown);
     void flush();
 }

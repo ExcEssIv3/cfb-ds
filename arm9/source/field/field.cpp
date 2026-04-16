@@ -1,11 +1,15 @@
 #include "field.h"
-#include "../players/offense/quarterback/quarterback.h"
-#include "../players/offense/wide_receiver/wide_receiver.h"
-#include "../players/defense/linebacker/linebacker.h"
 #include "../game_context.h"
 #include <cmath>
 #include "../renderer/renderer.h"
 #include <stdio.h>
+#include "../behaviors/offensiveBehaviors/ballCarrier/throwing_ball_carrier.h"
+#include "../behaviors/offensiveBehaviors/route_runner.h"
+#include "../behaviors/defensiveBehaviors/blitz.h"
+
+static ThrowingBallCarrier throwingBallCarrierBehavior;
+static RouteRunner routeRunnerBehavior;
+static Blitz blitzBehavior;
 #include "button_a.h"
 #include "button_b.h"
 #include "button_x.h"
@@ -38,26 +42,37 @@ Field::Field() {
 
     // QB
 
-    offense[0] = new Quarterback(
-        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.7f
+    offense[0] = new Player(
+        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
+        true, Player::Position::QUARTERBACK,
+        {5, 8, 0.7f, 0.15f}
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
 
     // WR
 
-    offense[1] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)}, 8, 1.0f, KEY_A, 0.5f
+    offense[1] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(TOP + 20)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.0f, 0.5f}
     );
-    offense[2] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)}, 8, 1.2f, KEY_B, 0.5f
+    offense[2] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(TOP + 40)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.2f, 0.5f}
     );
-    offense[3] = new WideReceiver(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)}, 8, 1.1f, KEY_X, 0.5f
+    offense[3] = new Player(
+        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)},
+        true, Player::Position::WIDE_RECEIVER,
+        {4, 9, 1.1f, 0.5f}
     );
     // DEFENSE
 
-    defense[0] = new Linebacker({(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)}, 8, 0.8f);
-    defense[0]->setStatus(Linebacker::Status::BLITZ);
+    defense[0] = new Player(
+        {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
+        false, Player::Position::LINEBACKER,
+        {6, 7, 0.8f, 0.3f}
+    );
 
     football = new Football(offense[0]->pos);
 
@@ -116,6 +131,14 @@ void Field::update() {
         if (keys & KEY_L) {
             clearStatus(Field::Status::PRESNAP);
             setStatus(Field::Status::IN_PLAY);
+
+            offense[0]->behavior = &throwingBallCarrierBehavior;
+            for (int i = 1; i < PLAYER_COUNT; i++) {
+                if (offense[i] != nullptr) offense[i]->behavior = &routeRunnerBehavior;
+            }
+            for (int i = 0; i < PLAYER_COUNT; i++) {
+                if (defense[i] != nullptr) defense[i]->behavior = &blitzBehavior;
+            }
         }
     } else if (hasStatus(Field::Status::IN_PLAY)) {
         football->update();
@@ -142,9 +165,9 @@ void Field::update() {
         if (football->hasStatus(Football::Status::FLYING) && football->pos == football->destination) endPlay(lineOfScrimmage);
         if (ballCarrier != nullptr) {
             ballCarrier->pos.print();
-            if (ballCarrier->pos.y > BOTTOM - ballCarrier->size || ballCarrier->pos.y < TOP)
+            if (ballCarrier->pos.y > BOTTOM - ballCarrier->stats.height || ballCarrier->pos.y < TOP)
                 endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
-            if (ballCarrier->pos.x + ballCarrier->size / 2 > convertToPixelYards(100)) endPlay(convertToPixelYards(25), false, true);
+            if (ballCarrier->pos.x + ballCarrier->stats.width > convertToPixelYards(100)) endPlay(convertToPixelYards(25), false, true);
             if (ballCarrier->pos.x < convertToPixelYards(0)) endPlay(convertToPixelYards(25), false, false, true);
         }
         
