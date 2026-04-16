@@ -1,108 +1,24 @@
+#include <cmath>
+#include <stdio.h>
 #include "field.h"
 #include "../game_context.h"
-#include <cmath>
 #include "../renderer/renderer.h"
-#include <stdio.h>
-#include "../behaviors/offensiveBehaviors/ballCarrier/throwing_ball_carrier.h"
-#include "../behaviors/offensiveBehaviors/route_runner.h"
-#include "../behaviors/defensiveBehaviors/blitz.h"
-
-static ThrowingBallCarrier throwingBallCarrierBehavior;
-static RouteRunner routeRunnerBehavior;
-static Blitz blitzBehavior;
-#include "button_a.h"
-#include "button_b.h"
-#include "button_x.h"
-#include "button_y.h"
-#include "button_rb.h"
-
-static int spriteIndexForButton(uint32_t button) {
-    if (button == KEY_A) return 0;
-    if (button == KEY_B) return 1;
-    if (button == KEY_X) return 2;
-    if (button == KEY_Y) return 3;
-    if (button == KEY_R) return 4;
-    return -1;
-}
+#include "../play_context/play_context.h"
+#include "../roster/roster.h"
 
 Field::Field() {
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        offense[i] = nullptr;
-        defense[i] = nullptr;
-    }
-
     setStatus(Field::Status::PRESNAP);
+
+    roster = new Roster();
+    playContext = new PlayContext(*roster);
 
     lineOfScrimmage = convertToPixelYards(25);
     drawPosition = lineOfScrimmage;
     firstDown = lineOfScrimmage + convertToPixelYards(10);
     ballCarrier = nullptr;
 
-    // OFFENSE
+    football = new Football(roster->offense[0]->pos);
 
-    // QB
-
-    offense[0] = new Player(
-        {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
-        true, Player::Position::QUARTERBACK,
-        {5, 8, 0.7f, 0.15f}
-    );
-    offense[0]->setStatus(Player::Status::BALL_CARRIER);
-
-    // WR
-
-    offense[1] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 20)},
-        true, Player::Position::WIDE_RECEIVER,
-        {4, 9, 1.0f, 0.5f}
-    );
-    offense[2] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(TOP + 40)},
-        true, Player::Position::WIDE_RECEIVER,
-        {4, 9, 1.2f, 0.5f}
-    );
-    offense[3] = new Player(
-        {(float)lineOfScrimmage - 4, (float)(BOTTOM - 20)},
-        true, Player::Position::WIDE_RECEIVER,
-        {4, 9, 1.1f, 0.5f}
-    );
-    // DEFENSE
-
-    defense[0] = new Player(
-        {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)},
-        false, Player::Position::LINEBACKER,
-        {6, 7, 0.8f, 0.3f}
-    );
-
-    football = new Football(offense[0]->pos);
-
-    offensePlay = {
-        {
-            { offense[1], KEY_A },
-            { offense[2], KEY_B },
-            { offense[3], KEY_X }
-        }, 3
-    };
-
-    // Load button sprite tile data
-    buttonGfxPtrs[0] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
-    buttonGfxPtrs[1] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
-    buttonGfxPtrs[2] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
-    buttonGfxPtrs[3] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
-    buttonGfxPtrs[4] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
-
-    dmaCopy(button_aTiles,  buttonGfxPtrs[0], button_aTilesLen);
-    dmaCopy(button_bTiles,  buttonGfxPtrs[1], button_bTilesLen);
-    dmaCopy(button_xTiles,  buttonGfxPtrs[2], button_xTilesLen);
-    dmaCopy(button_yTiles,  buttonGfxPtrs[3], button_yTilesLen);
-    dmaCopy(button_rbTiles, buttonGfxPtrs[4], button_rbTilesLen);
-
-    // Load palettes into sub-palette slots (16 colors each = 32 bytes)
-    dmaCopy(button_aPal,  SPRITE_PALETTE + 0 * 16, button_aPalLen);
-    dmaCopy(button_bPal,  SPRITE_PALETTE + 1 * 16, button_bPalLen);
-    dmaCopy(button_xPal,  SPRITE_PALETTE + 2 * 16, button_xPalLen);
-    dmaCopy(button_yPal,  SPRITE_PALETTE + 3 * 16, button_yPalLen);
-    dmaCopy(button_rbPal, SPRITE_PALETTE + 4 * 16, button_rbPalLen);
 }
 
 void Field::update() {
@@ -112,14 +28,14 @@ void Field::update() {
     ballCarrier = nullptr;
     if (football->hasStatus(Football::Status::HIDDEN)) {
 
-        for (int i = 0; i < PLAYER_COUNT; i++) {
-            if (offense[i] != nullptr && offense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
-                ballCarrier = offense[i];
-                drawPosition = (int)roundf(offense[i]->pos.x);
+        for (int i = 0; i < roster->PLAYER_COUNT; i++) {
+            if (roster->offense[i] != nullptr && roster->offense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
+                ballCarrier = roster->offense[i];
+                drawPosition = (int)roundf(roster->offense[i]->pos.x);
                 break;
-            } else if (defense[i] != nullptr && defense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
-                ballCarrier = defense[i];
-                drawPosition = (int)roundf(defense[i]->pos.x);
+            } else if (roster->defense[i] != nullptr && roster->defense[i]->hasStatus(Player::Status::BALL_CARRIER)) {
+                ballCarrier = roster->defense[i];
+                drawPosition = (int)roundf(roster->defense[i]->pos.x);
                 break;
             }
         }
@@ -132,26 +48,20 @@ void Field::update() {
             clearStatus(Field::Status::PRESNAP);
             setStatus(Field::Status::IN_PLAY);
 
-            offense[0]->behavior = &throwingBallCarrierBehavior;
-            for (int i = 1; i < PLAYER_COUNT; i++) {
-                if (offense[i] != nullptr) offense[i]->behavior = &routeRunnerBehavior;
-            }
-            for (int i = 0; i < PLAYER_COUNT; i++) {
-                if (defense[i] != nullptr) defense[i]->behavior = &blitzBehavior;
-            }
+            playContext->snap(*roster);
         }
     } else if (hasStatus(Field::Status::IN_PLAY)) {
         football->update();
-        GameContext ctx { football, ballCarrier, PLAYER_COUNT, lineOfScrimmage, firstDown, offensePlay, {} };
-        for (int i = 0; i < PLAYER_COUNT; i++) {
-            if (offense[i] != nullptr) {
-                offense[i]->runAI(ctx);
+        GameContext ctx { football, ballCarrier, roster->PLAYER_COUNT, lineOfScrimmage, firstDown, playContext->offensePlay, {} };
+        for (int i = 0; i < roster->PLAYER_COUNT; i++) {
+            if (roster->offense[i] != nullptr) {
+                roster->offense[i]->runAI(ctx);
             }
         }
-        for (int i = 0; i < PLAYER_COUNT; i++) {
-            if (defense[i] != nullptr) {
-                defense[i]->runAI(ctx);
-                if (ballCarrier != nullptr && defense[i]->pos == ballCarrier->pos) {
+        for (int i = 0; i < roster->PLAYER_COUNT; i++) {
+            if (roster->defense[i] != nullptr) {
+                roster->defense[i]->runAI(ctx);
+                if (ballCarrier != nullptr && roster->defense[i]->pos == ballCarrier->pos) {
                     // TACKLE
                     // TODO: CALCULATE BREAK TACKLE
                     endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
@@ -195,34 +105,20 @@ void Field::endPlay(int lineOfScrimmage, bool firstDown, bool touchdown, bool sa
         if (firstDown) this->firstDown = lineOfScrimmage + convertToPixelYards(10);
     }
 
-    offense[0]->setStatus(Player::Status::BALL_CARRIER);
     football->resetStatus();
     football->setStatus(Football::Status::HIDDEN);
 
-    offense[0]->pos = {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
-    defense[0]->pos = {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
-
-    for (int i = 1; i < PLAYER_COUNT; i++) {
-        if (offense[i] != nullptr) {
-            offense[i]->pos.x = (float)(this->lineOfScrimmage - 4);
-            offense[i]->clearStatus(Player::Status::BALL_CARRIER);
-        }
-    }
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        if (defense[i] != nullptr) {
-            defense[i]->clearStatus(Player::Status::BALL_CARRIER);
-        }
-    }
+    playContext->reset(*roster, this->lineOfScrimmage);
 }
 
 void Field::draw() {
     Renderer::drawField(drawPosition - VIEWPORT_WIDTH / 4, lineOfScrimmage, firstDown);
-    for (int i = 0; i < PLAYER_COUNT; i++) {
-        if (offense[i] != nullptr) {
-            Renderer::drawOffensePlayer(offense[i], drawPosition - VIEWPORT_WIDTH / 4);
+    for (int i = 0; i < roster->PLAYER_COUNT; i++) {
+        if (roster->offense[i] != nullptr) {
+            Renderer::drawOffensePlayer(roster->offense[i], drawPosition - VIEWPORT_WIDTH / 4);
         }
-        if (defense[i] != nullptr) {
-            Renderer::drawDefensePlayer(defense[i], drawPosition - VIEWPORT_WIDTH / 4);
+        if (roster->defense[i] != nullptr) {
+            Renderer::drawDefensePlayer(roster->defense[i], drawPosition - VIEWPORT_WIDTH / 4);
         }
     }
     if (!football->hasStatus(Football::Status::HIDDEN)) {
@@ -235,16 +131,5 @@ void Field::draw() {
 
     // Button label sprites above each receiver
     int scrollOffset = drawPosition - VIEWPORT_WIDTH / 4;
-    for (int i = 0; i < offensePlay.passCatcherCount; i++) {
-        PassCatcher& pc = offensePlay.passCatchers[i];
-        int sprIdx = spriteIndexForButton(pc.button);
-        if (sprIdx < 0) continue;
-        int screenX = (int)pc.player->pos.x - scrollOffset - 8;
-        int screenY = (int)pc.player->pos.y - 20;
-        bool hide = screenX < -16 || screenX > VIEWPORT_WIDTH || screenY < -16 || screenY > VIEWPORT_HEIGHT;
-        oamSet(&oamMain, i, screenX, screenY, 0, sprIdx,
-               SpriteSize_16x16, SpriteColorFormat_16Color,
-               buttonGfxPtrs[sprIdx], -1, false, hide, false, false, false);
-    }
-    oamUpdate(&oamMain);
+    playContext->draw(scrollOffset);
 }

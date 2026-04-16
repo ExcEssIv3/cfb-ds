@@ -25,23 +25,23 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
 
     int firstLine = (int)ceil(drawPosition / (5.0 * PIXELS_PER_YARD));
     if (firstLine < 1) {
-        drawRect(-10 * PIXELS_PER_YARD - drawPosition, Field::TOP, 10 * PIXELS_PER_YARD, Field::DRAW_HEIGHT, OFFENSE_COLOR);
+        drawRect(-10 * PIXELS_PER_YARD - drawPosition, TOP, 10 * PIXELS_PER_YARD, DRAW_HEIGHT, OFFENSE_COLOR);
         if (firstLine < 0) firstLine = 0;
     }
     int lastLine  = (int)floor((drawPosition + VIEWPORT_WIDTH - 1) / (5.0 * PIXELS_PER_YARD));
     if (lastLine > 19) {
-        drawRect(100 * PIXELS_PER_YARD - drawPosition, Field::TOP, 10 * PIXELS_PER_YARD, Field::DRAW_HEIGHT, DEFENSE_COLOR);
+        drawRect(100 * PIXELS_PER_YARD - drawPosition, TOP, 10 * PIXELS_PER_YARD, DRAW_HEIGHT, DEFENSE_COLOR);
         if (lastLine > 20) lastLine = 20;
     }
 
     for (int i = firstLine; i <= lastLine; i++) {
         int fieldX  = i * 5 * PIXELS_PER_YARD;
         int screenX = fieldX - drawPosition;
-        drawRect(screenX, Field::TOP, 1, Field::DRAW_HEIGHT, LINE_COLOR);
+        drawRect(screenX, TOP, 1, DRAW_HEIGHT, LINE_COLOR);
     }
 
-    drawRect(lineOfScrimmage - drawPosition, Field::TOP, 1, Field::DRAW_HEIGHT, LINE_OF_SCRIMMAGE_COLOR);
-    drawRect(firstDown - drawPosition, Field::TOP, 1, Field::DRAW_HEIGHT, FIRST_DOWN_COLOR);
+    drawRect(lineOfScrimmage - drawPosition, TOP, 1, DRAW_HEIGHT, LINE_OF_SCRIMMAGE_COLOR);
+    drawRect(firstDown - drawPosition, TOP, 1, DRAW_HEIGHT, FIRST_DOWN_COLOR);
 }
 
 void Renderer::drawOffensePlayer(Player* player, int xOffset = 0) {
