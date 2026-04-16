@@ -42,21 +42,24 @@ cfb/
     └── source/
         ├── main.cpp      # entry point
         ├── screen.h      # shared VIEWPORT_WIDTH / VIEWPORT_HEIGHT constants (256×192)
+        ├── field_geometry.h  # global field constants — TOP, BOTTOM, DRAW_WIDTH, DRAW_HEIGHT, END_ZONE_PX, PLAYER_SCREEN_X
         ├── status_mixin.h  # StatusMixin base — statusFlags, setStatus/clearStatus/hasStatus/resetStatus
-        ├── field/        # Field class — geometry, game state, update(), draw()
+        ├── field/        # Field class — game state coordinator, update(), draw(), endPlay()
         ├── football/     # Football class — flight arc, fumble state
         ├── physics/      # Physics namespace — move(), distance()
         ├── renderer/     # Renderer namespace — drawRect(), drawOffensePlayer(), drawDefensePlayer(), drawField(), flush()
         ├── perf/         # Perf namespace — startFrame(), endFrame(), draw(); FPS/ms/heap stats on bottom screen
+        ├── roster/       # Roster class — owns offense[]/defense[] Player arrays, construction, reset()
+        ├── play_context/ # PlayContext class — offensePlay, button sprites, snap(), draw(), reset()
         ├── behaviors/
         │   ├── behavior.h            # Base Behavior struct — virtual update(Player*, GameContext&)
-        │   ├── offensiveBehaviors/
+        │   ├── offensive_behaviors/
         │   │   ├── ball_carrier      # BallCarrier — d-pad movement for any ball carrier
-        │   │   ├── ballCarrier/
+        │   │   ├── ball_carrier/
         │   │   │   ├── throwing_ball_carrier  # ThrowingBallCarrier : BallCarrier — throw logic
         │   │   │   └── running_ball_carrier   # RunningBallCarrier : BallCarrier — post-catch running; exposes runningBallCarrierBehavior singleton
         │   │   └── route_runner      # RouteRunner — runs route, catches ball, switches to RunningBallCarrier on catch
-        │   └── defensiveBehaviors/
+        │   └── defensive_behaviors/
         │       └── blitz             # Blitz — chase ball carrier
         └── players/
             ├── player_stats.h        # PlayerStats — width, height, speed, catchRadius (all default 0)
@@ -69,14 +72,16 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 ## Architecture
 
-- **Field** (continued) — resolved `ballCarrier` each frame before AI runs. Drives the game loop via `update()` (input + AI) and `draw()` (clear + render all). Static constants define field geometry (`DRAW_WIDTH`, `TOP`, `BOTTOM`, etc.). `PIXELS_PER_YARD` and `convertToPixelYards(float)` live in `utils.h`.
-- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors); all color macros include `| BIT(15)` for the alpha bit required by `BgType_Bmp16`. Has a static `backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT]` and a `bgGfxPtr` set via `Renderer::init(u16*)`. All `drawRect` calls write to the backbuffer; `flush()` copies it to `bgGfxPtr` via `dmaCopy` at the end of each frame. `drawField` clears the backbuffer with `dmaFillHalfWords`. Sidelines are drawn by `Field::draw()` after `drawField()`, before `flush()`. Field constants are accessed via `field.h` included in `renderer.cpp` only — not in `renderer.h` — to avoid circular includes. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
+- **Field** — inherits `StatusMixin`. `Field::Status`: `PRESNAP` (bit 0), `IN_PLAY` (bit 1). Game state coordinator: owns `drawPosition`, `lineOfScrimmage`, `firstDown`, `Football*`, `Player* ballCarrier`, `Roster*`, and `PlayContext*`. `update()` resolves `ballCarrier`, runs input/AI, detects end-play conditions. `draw()` calls Renderer, iterates roster players, draws football and sidelines, delegates button HUD to `playContext->draw()`. `endPlay()` updates down/distance then delegates to `playContext->reset()`.
+- **Roster** — owns `offense[PLAYER_COUNT]` and `defense[PLAYER_COUNT]` Player pointer arrays. Constructs all players with position-appropriate `PlayerStats` in its constructor. `endPlay(lineOfScrimmage, octx, dctx)` repositions players and resets `BALL_CARRIER` status between plays.
+- **PlayContext** — owns `OffensivePlayContext offensePlay`, `DefensivePlayContext defensePlay`, and `u16* buttonGfxPtrs[5]`. Constructor takes `Roster&`, builds pass catcher assignments, allocates OAM gfx, and loads button tile/palette data. `snap(Roster&)` assigns static behavior instances at snap (QB → `ThrowingBallCarrier`, others → `RouteRunner`, defense → `Blitz`). `draw(scrollOffset)` renders button label sprites via OAM. `reset(Roster&, lineOfScrimmage)` delegates to `roster.endPlay()`.
+- **field_geometry.h** — global constants: `TOP`, `BOTTOM`, `DRAW_WIDTH`, `DRAW_HEIGHT`, `END_ZONE_PX`, `PLAYER_SCREEN_X`. Included by `field.h`, `roster.h`, and any other subsystem that needs field dimensions without depending on `Field`.
+- **Renderer** — owns all colors as macros (`OFFENSE_COLOR`, `DEFENSE_COLOR`, field/line colors); all color macros include `| BIT(15)` for the alpha bit required by `BgType_Bmp16`. Has a static `backbuffer[VIEWPORT_WIDTH * VIEWPORT_HEIGHT]` and a `bgGfxPtr` set via `Renderer::init(u16*)`. All `drawRect` calls write to the backbuffer; `flush()` copies it to `bgGfxPtr` via `dmaCopy` at the end of each frame. `drawField` clears the backbuffer with `dmaFillHalfWords`. Sidelines are drawn by `Field::draw()` after `drawField()`, before `flush()`. Football is drawn directly in `Field::draw()` using `football->color` and `football->drawSize`.
 - **StatusMixin** — base class in `status_mixin.h` providing `uint16_t statusFlags` and templated `setStatus`/`clearStatus`/`hasStatus`/`resetStatus`. Inherited by `Player`, `Football`, and `Field`. Each class defines its own `Status` enum class; bits are logically independent per class.
-- **Behavior** — base struct in `behaviors/behavior.h` with a single pure virtual `update(Player* self, const GameContext& ctx)`. Concrete behaviors live under `behaviors/offensiveBehaviors/` and `behaviors/defensiveBehaviors/`. Stateless behaviors are exposed as singletons (e.g. `runningBallCarrierBehavior`). `Field` assigns behaviors to players at snap; behaviors can reassign `self->behavior` mid-play (e.g. `RouteRunner` switches to `RunningBallCarrier` on catch).
-- **Player** — inherits `StatusMixin`. Has `Vector2 pos`, `bool isOffense`, `Position position`, `PlayerStats stats`, `Behavior* behavior`, `move(direction)` (angle-based), `goTo(Vector2)`. `runAI()` handles fumble pickup first (early return), then delegates to `behavior->update(this, ctx)` if a behavior is assigned. Ball possession tracked via `Player::Status::BALL_CARRIER` (bit 0). No subclasses — all players are instantiated directly as `Player` with the appropriate `isOffense`, `Position`, and `PlayerStats`. `Field` holds separate `Player* offense[]` and `Player* defense[]` arrays; `PassCatcher::player` is also `Player*`.
-- **PlayerStats** — plain struct in `player_stats.h` holding `width`, `height` (pixels), `speed`, and `catchRadius` (all default 0). Passed by value to the `Player` constructor. All players carry all stats; position-appropriate defaults are set at construction in `Field`.
+- **Behavior** — base struct in `behaviors/behavior.h` with a single pure virtual `update(Player* self, const GameContext& ctx)`. Concrete behaviors live under `behaviors/offensive_behaviors/` and `behaviors/defensive_behaviors/`. Stateless behaviors are exposed as singletons (e.g. `runningBallCarrierBehavior`). `PlayContext` assigns behaviors to players at snap; behaviors can reassign `self->behavior` mid-play (e.g. `RouteRunner` switches to `RunningBallCarrier` on catch).
+- **Player** — inherits `StatusMixin`. Has `Vector2 pos`, `bool isOffense`, `Position position`, `PlayerStats stats`, `Behavior* behavior`, `move(direction)` (angle-based), `goTo(Vector2)`. `runAI()` handles fumble pickup first (early return), then delegates to `behavior->update(this, ctx)` if a behavior is assigned. Ball possession tracked via `Player::Status::BALL_CARRIER` (bit 0). No subclasses — all players are instantiated directly as `Player` with the appropriate `isOffense`, `Position`, and `PlayerStats`. `Roster` holds separate `Player* offense[]` and `Player* defense[]` arrays; `PassCatcher::player` is also `Player*`.
+- **PlayerStats** — plain struct in `player_stats.h` holding `width`, `height` (pixels), `speed`, and `catchRadius` (all default 0). Passed by value to the `Player` constructor. All players carry all stats; position-appropriate defaults are set at construction in `Roster`.
 - **Football** — inherits `StatusMixin`. `Football::Status`: `HIDDEN` (bit 0), `FLYING` (bit 1), `FUMBLED` (bit 2) — mutually exclusive, set one at a time. Uses `Vector2 pos`, `start`, and `destination`. FLYING animates a parabolic arc based on travel distance. `update()` computes `drawSize` each frame (used by `Field::draw()` for visual arc effect) but does not draw directly.
-- **Field** — inherits `StatusMixin`. `Field::Status`: `PRESNAP` (bit 0), `IN_PLAY` (bit 1). Owns game state: `drawPosition`, `lineOfScrimmage`, `firstDown`, the 11-player offense/defense arrays, a `Football*` pointer, a `Player* ballCarrier`, an `OffensivePlayContext offensePlay`, and `u16* buttonGfxPtrs[5]`. Allocates OAM sprite gfx and loads button tile/palette data in the constructor. `draw()` calls `oamSet`/`oamUpdate` to position button label sprites above each pass catcher before `flush()`. In `update()`, `football->update()` is called before player AI runs. `endPlay()` clears `BALL_CARRIER` status on all offense and defense players. At snap (KEY_L), assigns static behavior instances: QB → `ThrowingBallCarrier`, other offense → `RouteRunner`, defense → `Blitz`.
 - **Scrolling** — `drawPosition` is derived from the ball carrier's field-space X, anchored so the player appears at `PLAYER_SCREEN_X` (1/4 screen width = 64px), clamped at field edges.
 - **Vector2** — `struct Vector2 { float x, y; }` defined in `utils.h` alongside `angleTo(a, b)` and `distanceTo(a, b)` free functions. Used for all player and football positions.
 

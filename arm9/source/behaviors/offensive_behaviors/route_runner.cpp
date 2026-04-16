@@ -3,7 +3,7 @@
 #include "../../players/player.h"
 #include "../../game_context.h"
 #include "../../football/football.h"
-#include "ballCarrier/running_ball_carrier.h"
+#include "ball_carrier/running_ball_carrier.h"
 
 void RouteRunner::update(Player *self, const GameContext &ctx)
 {
