@@ -1,8 +1,8 @@
 #include "play_context.h"
-#include "../behaviors/offensive_behaviors/ball_carrier/throwing_ball_carrier.h"
-#include "../behaviors/offensive_behaviors/route_runner.h"
-#include "../behaviors/defensive_behaviors/blitz.h"
-#include "../behaviors/defensive_behaviors/man_defense.h"
+#include "../behaviors/offensive_behaviors/ball_carrier/throwing_ball_carrier/throwing_ball_carrier.h"
+#include "../behaviors/offensive_behaviors/route_runner/route_runner.h"
+#include "../behaviors/defensive_behaviors/blitz/blitz.h"
+#include "../behaviors/defensive_behaviors/man_defense/man_defense.h"
 
 static ThrowingBallCarrier throwingBallCarrierBehavior;
 static RouteRunner routeRunnerBehavior;

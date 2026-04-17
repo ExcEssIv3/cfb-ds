@@ -1,8 +1,8 @@
-#include "../../../players/player.h"
-#include "../../../game_context.h"
+#include "../../../../players/player.h"
+#include "../../../../game_context.h"
 #include "../ball_carrier.h"
 #include "throwing_ball_carrier.h"
-#include "../../../football/football.h"
+#include "../../../../football/football.h"
 
 void ThrowingBallCarrier::update(Player *self, const GameContext& ctx)
 {

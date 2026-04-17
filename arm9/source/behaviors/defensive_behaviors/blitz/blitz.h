@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../behavior.h"
+#include "../../behavior.h"
 
-struct ManDefense : Behavior {
+struct Blitz : Behavior {
     void update(Player* self, const GameContext& ctx) override;
 };

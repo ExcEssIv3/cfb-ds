@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../behavior.h"
+#include "../../behavior.h"
 
-struct RouteRunner : Behavior {
+struct ManDefense : Behavior {
     void update(Player* self, const GameContext& ctx) override;
 };

@@ -55,14 +55,13 @@ cfb/
         ├── behaviors/
         │   ├── behavior.h            # Base Behavior struct — virtual update(Player*, GameContext&)
         │   ├── offensive_behaviors/
-        │   │   ├── ball_carrier      # BallCarrier — d-pad movement for any ball carrier
-        │   │   ├── ball_carrier/
-        │   │   │   ├── throwing_ball_carrier  # ThrowingBallCarrier : BallCarrier — throw logic
-        │   │   │   └── running_ball_carrier   # RunningBallCarrier : BallCarrier — post-catch running; exposes runningBallCarrierBehavior singleton
-        │   │   └── route_runner      # RouteRunner — runs route, catches ball, switches to RunningBallCarrier on catch
+        │   │   ├── ball_carrier/     # BallCarrier — d-pad movement for any ball carrier
+        │   │   │   ├── throwing_ball_carrier/  # ThrowingBallCarrier : BallCarrier — throw logic
+        │   │   │   └── running_ball_carrier/   # RunningBallCarrier : BallCarrier — post-catch running; exposes runningBallCarrierBehavior singleton
+        │   │   └── route_runner/     # RouteRunner — runs route, catches ball, switches to RunningBallCarrier on catch
         │   └── defensive_behaviors/
-        │       ├── blitz             # Blitz — chase ball carrier
-        │       └── man_defense       # ManDefense — man coverage; shadows assigned receiver, intercepts pass, chases ball carrier post-catch
+        │       ├── blitz/            # Blitz — chase ball carrier
+        │       └── man_defense/      # ManDefense — man coverage; shadows assigned receiver, intercepts pass, chases ball carrier post-catch
         └── players/
             ├── player_stats.h        # PlayerStats — width, height, acceleration, topSpeed, catchRadius, weight, breakTackle, tackle (all default 0)
             └── player.h/cpp          # Player — pos, velocity, isOffense, position, stats (PlayerStats), behavior*, accelerate(), decelerate(), move(), goTo(), runAI()

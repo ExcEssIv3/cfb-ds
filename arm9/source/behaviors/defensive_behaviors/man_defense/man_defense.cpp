@@ -1,9 +1,9 @@
 #include <nds.h>
 #include <stdio.h>
 #include "man_defense.h"
-#include "../../game_context.h"
-#include "../../players/player.h"
-#include "../../football/football.h"
+#include "../../../game_context.h"
+#include "../../../players/player.h"
+#include "../../../football/football.h"
 
 void ManDefense::update(Player *self, const GameContext &ctx)
 {

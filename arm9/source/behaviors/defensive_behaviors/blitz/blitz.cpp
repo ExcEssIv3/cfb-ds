@@ -1,6 +1,6 @@
 #include "blitz.h"
-#include "../../players/player.h"
-#include "../../game_context.h"
+#include "../../../players/player.h"
+#include "../../../game_context.h"
 
 void Blitz::update(Player* self, const GameContext& ctx) {
     if (ctx.ballCarrier != nullptr) {

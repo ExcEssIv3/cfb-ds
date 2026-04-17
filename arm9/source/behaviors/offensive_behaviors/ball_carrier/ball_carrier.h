@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../behavior.h"
+#include "../../behavior.h"
 
 struct BallCarrier : Behavior {
     void update(Player* self, const GameContext& ctx) override;
