@@ -8,7 +8,8 @@
 #include "../contact/contact.h"
 
 Field::Field() {
-    setStatus(Field::Status::PRESNAP);
+    setStatus(FieldStatus::PRESNAP);
+    setStatus(FieldStatus::PASSABLE);
 
     roster = new Roster();
     playContext = new PlayContext(*roster);
@@ -43,17 +44,17 @@ void Field::update() {
     } else {
         drawPosition = (int)roundf(football->pos.x);
     }
-    if (hasStatus(Field::Status::PRESNAP)) {
+    if (hasStatus(FieldStatus::PRESNAP)) {
         // TODO: implement play system
         if (keys & KEY_L) {
-            clearStatus(Field::Status::PRESNAP);
-            setStatus(Field::Status::IN_PLAY);
+            clearStatus(FieldStatus::PRESNAP);
+            setStatus(FieldStatus::IN_PLAY);
 
             playContext->snap(*roster);
         }
-    } else if (hasStatus(Field::Status::IN_PLAY)) {
+    } else if (hasStatus(FieldStatus::IN_PLAY)) {
         football->update();
-        GameContext ctx { football, ballCarrier, roster->PLAYER_COUNT, lineOfScrimmage, firstDown, playContext->offensePlay, playContext->defensePlay };
+        GameContext ctx { football, ballCarrier, roster->PLAYER_COUNT, lineOfScrimmage, firstDown, statusFlags, playContext->offensePlay, playContext->defensePlay };
         for (int i = 0; i < roster->PLAYER_COUNT; i++) {
             if (roster->offense[i] != nullptr) {
                 roster->offense[i]->runAI(ctx);
@@ -86,11 +87,15 @@ void Field::update() {
             }
         }
 
-        printf("PRESNAP:%d IN_PLAY:%d\n", hasStatus(Field::Status::PRESNAP), hasStatus(Field::Status::IN_PLAY));
+        printf("PRESNAP:%d IN_PLAY:%d\n", hasStatus(FieldStatus::PRESNAP), hasStatus(FieldStatus::IN_PLAY));
 
         // PLAY END STATES
-        if (football->hasStatus(Football::Status::FLYING) && football->pos == football->destination) endPlay(lineOfScrimmage);
+        if (football->hasStatus(Football::Status::FLYING)) {
+            if (football->pos.x > lineOfScrimmage) clearStatus(FieldStatus::PASSABLE);
+            if (football->pos == football->destination) endPlay(lineOfScrimmage);
+        }
         if (ballCarrier != nullptr) {
+            if (ballCarrier->pos.x > lineOfScrimmage) clearStatus(FieldStatus::PASSABLE);
             ballCarrier->pos.print();
             if (ballCarrier->pos.y > BOTTOM - ballCarrier->stats.height || ballCarrier->pos.y < TOP)
                 endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
@@ -103,7 +108,8 @@ void Field::update() {
 
 void Field::endPlay(int lineOfScrimmage, bool firstDown, bool touchdown, bool safety) {
     resetStatus();
-    setStatus(Field::Status::PRESNAP);
+    setStatus(FieldStatus::PRESNAP);
+    setStatus(FieldStatus::PASSABLE);
     for (int i = 0; i < 120; i++) {
         consoleClear();
         printf("Play End Time: %d.%d\n", (120 - i) / 60, ((120 - i) % 60) / 6);
@@ -148,5 +154,5 @@ void Field::draw() {
 
     // Button label sprites above each receiver
     int scrollOffset = drawPosition - VIEWPORT_WIDTH / 4;
-    playContext->draw(scrollOffset);
+    playContext->draw(scrollOffset, hasStatus(FieldStatus::PASSABLE));
 }

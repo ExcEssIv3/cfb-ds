@@ -11,6 +11,6 @@ public:
 
     PlayContext(Roster& roster);
     void snap(Roster& roster);
-    void draw(int scrollOffset);
+    void draw(int scrollOffset, bool passable);
     void reset(Roster& roster, int lineOfScrimmage);
 };

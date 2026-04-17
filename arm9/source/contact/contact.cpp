@@ -11,20 +11,20 @@ bool Contact::tackle(Player *tackler, Player *tacklee)
     // weight difference
     // speed
 
-    float tackleOdds = 0.7f;
+    float tackleOdds = baseOdds;
 
-    tackleOdds += (tackler->stats.tackle - tacklee->stats.breakTackle) / breakTackleWeight;
-    tackleOdds += (tackler->stats.weight - tacklee->stats.weight) / weightDeltaWeight;
+    tackleOdds += ((tackler->stats.tackle - tacklee->stats.breakTackle) / 100.0f) * breakTackleWeight;
+    tackleOdds += ((tackler->stats.weight - tacklee->stats.weight) / 100.0f) * weightDeltaWeight;
     float normalizedSpeed = magnitude(tackler->velocity - tacklee->velocity) / tacklee->stats.topSpeed;
 
-    tackleOdds += normalizedSpeed / speedWeight;
+    tackleOdds += normalizedSpeed * speedWeight;
     
     char buf[64];
     sprintf(buf, "Tackle: %d\n", (int)(tackleOdds * 1000));
     nocashWrite(buf, strlen(buf));
 
-    if (tackleOdds < 0.50f) tackleOdds = 0.50f;
-    if (tackleOdds > 0.95f) tackleOdds = 0.95f;
+    if (tackleOdds < minOdds) tackleOdds = minOdds;
+    if (tackleOdds > maxOdds) tackleOdds = maxOdds;
 
     return (rand() % 100) < (int)(tackleOdds * 100);
 }

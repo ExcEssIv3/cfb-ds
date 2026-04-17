@@ -17,7 +17,7 @@ void ManDefense::update(Player *self, const GameContext &ctx)
 
     if (receiver != nullptr) {
         if (ctx.ballCarrier != nullptr) {
-            if (ctx.ballCarrier->position != Player::Position::QUARTERBACK ) {
+            if (!(ctx.fieldStatus & static_cast<uint16_t>(FieldStatus::PASSABLE))) {
                 if (ctx.ballCarrier->isOffense) {
                     self->goTo(ctx.ballCarrier->pos);
                 } else {

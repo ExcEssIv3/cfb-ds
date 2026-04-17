@@ -11,10 +11,7 @@
 
 class Field : public StatusMixin {
 public:
-    enum class Status : uint16_t {
-        PRESNAP  = 1 << 0,
-        IN_PLAY  = 1 << 1,
-    };
+    
     // Game state
     int drawPosition;
     int lineOfScrimmage;

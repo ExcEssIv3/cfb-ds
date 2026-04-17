@@ -5,6 +5,12 @@
 class Player;
 struct Football;
 
+enum class FieldStatus : uint16_t {
+    PRESNAP  = 1 << 0,
+    IN_PLAY  = 1 << 1,
+    PASSABLE = 1 << 2,
+};
+
 struct PassCatcher {
     Player* player;
     uint32_t button;
@@ -42,6 +48,7 @@ struct GameContext {
     int playerCount;
     int lineOfScrimmage;
     int firstDown;
+    uint16_t fieldStatus;
     OffensivePlayContext offensePlay;
     DefensivePlayContext defensePlay;
 };

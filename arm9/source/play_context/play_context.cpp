@@ -77,19 +77,23 @@ void PlayContext::snap(Roster &roster)
     }
 }
 
-void PlayContext::draw(int scrollOffset)
+void PlayContext::draw(int scrollOffset, bool passable)
 {
     // TODO: fix the draw position to center of middle of pass catcher, not left edge
     for (int i = 0; i < offensePlay.passCatcherCount; i++) {
-        PassCatcher& pc = offensePlay.passCatchers[i];
-        int sprIdx = spriteIndexForButton(pc.button);
-        if (sprIdx < 0) continue;
-        int screenX = (int)pc.player->pos.x - scrollOffset - 8;
-        int screenY = (int)pc.player->pos.y - 20;
-        bool hide = screenX < -16 || screenX > VIEWPORT_WIDTH || screenY < -16 || screenY > VIEWPORT_HEIGHT;
-        oamSet(&oamMain, i, screenX, screenY, 0, sprIdx,
-               SpriteSize_16x16, SpriteColorFormat_16Color,
-               buttonGfxPtrs[sprIdx], -1, false, hide, false, false, false);
+        if (passable) {
+            PassCatcher& pc = offensePlay.passCatchers[i];
+            int sprIdx = spriteIndexForButton(pc.button);
+            if (sprIdx < 0) continue;
+            int screenX = (int)pc.player->pos.x - scrollOffset - 8 + (pc.player->stats.width / 2);
+            int screenY = (int)pc.player->pos.y - 20;
+            bool hide = screenX < -16 || screenX > VIEWPORT_WIDTH || screenY < -16 || screenY > VIEWPORT_HEIGHT;
+            oamSet(&oamMain, i, screenX, screenY, 0, sprIdx,
+                SpriteSize_16x16, SpriteColorFormat_16Color,
+                buttonGfxPtrs[sprIdx], -1, false, hide, false, false, false);
+        } else {
+            oamSetHidden(&oamMain, i, true);
+        }
     }
     oamUpdate(&oamMain);
 }
