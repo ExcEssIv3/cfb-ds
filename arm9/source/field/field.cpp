@@ -145,7 +145,7 @@ void Field::draw() {
         }
     }
     if (!football->hasStatus(Football::Status::HIDDEN)) {
-        Renderer::drawRect(football->pos.x - (drawPosition - VIEWPORT_WIDTH / 4), football->pos.y, football->drawSize, football->drawSize / 2, football->color);
+        Renderer::drawFootball(football->pos, drawPosition - VIEWPORT_WIDTH / 4, football->whitePosition);
     }
 
     // Sidelines drawn last so nothing else can overflow-bleed into them

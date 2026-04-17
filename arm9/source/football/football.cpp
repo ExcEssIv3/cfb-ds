@@ -4,6 +4,7 @@
 
 void Football::update() {
     if (hasStatus(Status::FLYING)) {
+        if (++whitePosition / 4 >= 3) whitePosition = 0;
         float xDistance = destination.x - start.x;
         float yDistance = destination.y - start.y;
         float dx = pos.x - start.x;
@@ -32,6 +33,9 @@ void Football::update() {
 
         drawSize = (int)floorf(heightFuncNormalized * maxHeight) + size;
     } else if (hasStatus(Status::FUMBLED)) {
+        whitePosition = 0;
         // TODO: add fumble logic
+    } else {
+        whitePosition = 0;
     }
 }

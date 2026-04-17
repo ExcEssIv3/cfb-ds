@@ -147,16 +147,18 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
     defense[2]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 40)};
     defense[3]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(BOTTOM - 20)};
 
-    for (int i = 1; i < PLAYER_COUNT; i++) {
+    for (int i = 0; i < PLAYER_COUNT; i++) {
         if (offense[i] != nullptr) {
             if (i > 0) {
                 offense[i]->pos.x = (float)(lineOfScrimmage - 4);
                 offense[i]->clearStatus(Player::Status::BALL_CARRIER);
+                offense[i]->clearStatus(Player::Status::STUMBLED);
             }
             offense[i]->velocity = {0, 0};
         }
         if (defense[i] != nullptr) {
             defense[i]->clearStatus(Player::Status::BALL_CARRIER);
+            defense[i]->clearStatus(Player::Status::STUMBLED);
             defense[i]->velocity = {0, 0};
         }
     }

@@ -44,16 +44,35 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
     drawRect(firstDown - drawPosition, TOP, 1, DRAW_HEIGHT, FIRST_DOWN_COLOR);
 }
 
-void Renderer::drawOffensePlayer(Player* player, int xOffset = 0) {
+static void drawPlayer(Player* player, int xOffset, uint16_t baseColor) {
     int drawX = (int)roundf(player->pos.x) - xOffset;
     int drawY = (int)roundf(player->pos.y);
-    Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, OFFENSE_COLOR);
+    uint16_t color = player->hasStatus(Player::Status::STUMBLED) ? DARKEN(baseColor, 1) : baseColor;
+    Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, COLOR_BLACK);
+    Renderer::drawRect(drawX + 1, drawY + 1, player->stats.width - 2, player->stats.height - 2, color);
+    if (player->hasStatus(Player::Status::BALL_CARRIER)) {
+        Renderer::drawFootball(player->pos + Vector2({roundf(player->stats.width * 0.25f), roundf(player->stats.height * 0.25f)}), xOffset);
+    }
 }
 
-void Renderer::drawDefensePlayer(Player* player, int xOffset = 0) {
-    int drawX = (int)roundf(player->pos.x) - xOffset;
-    int drawY = (int)roundf(player->pos.y);
-    Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, DEFENSE_COLOR);
+void Renderer::drawOffensePlayer(Player* player, int xOffset) {
+    drawPlayer(player, xOffset, OFFENSE_COLOR);
+}
+
+void Renderer::drawDefensePlayer(Player* player, int xOffset) {
+    drawPlayer(player, xOffset, DEFENSE_COLOR);
+}
+
+void Renderer::drawFootball(const Vector2& drawPosition, int xOffset, uint8_t whiteLocation) {
+    // TODO: Update this to use the size
+    int drawX = (int)roundf(drawPosition.x) - xOffset;
+    int drawY = (int)roundf(drawPosition.y);
+
+    Renderer::drawRect(drawX + 1, drawY, 2, 3, FOOTBALL_COLOR);
+    Renderer::drawRect(drawX, drawY + 1, 1, 1, FOOTBALL_COLOR);
+    Renderer::drawRect(drawX + 3, drawY + 1, 1, 1, FOOTBALL_COLOR);
+    uint8_t whiteRow = whiteLocation / 4;
+    if (whiteRow < 3) Renderer::drawRect(drawX + 1, drawY + whiteRow, 2, 1, COLOR_WHITE);
 }
 
 void Renderer::flush() {
