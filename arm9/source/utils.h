@@ -46,6 +46,7 @@ inline float magnitude(const Vector2 v) {
     return sqrtf(v.x * v.x + v.y * v.y);
 }
 
+// TODO: Include acceleration and direction in math
 inline Vector2 interceptPoint(const Vector2& targetPos, const Vector2& targetDest, float targetSpeed, const Vector2& pursuerPos, float pursuerSpeed) {
     Vector2 targetTravel = { targetDest.x - targetPos.x, targetDest.y - targetPos.y };
     float len = distanceTo(targetPos, targetDest);

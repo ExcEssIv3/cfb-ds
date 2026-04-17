@@ -15,8 +15,25 @@ struct OffensivePlayContext {
     int passCatcherCount;
 };
 
+struct ManDefender {
+    Player* defender;
+    Player* receiver;
+};
+
+struct ZoneDefender {
+    Player* defender;
+    // TODO: Define zones
+};
+
 struct DefensivePlayContext {
-    // stub
+    PassCatcher passCatchers[5];
+    int passCatcherCount;
+
+    ManDefender manDefenders[5];
+    int manDefenderCount;
+
+    ZoneDefender zoneDefenders[5];
+    int zoneDefenderCount;
 };
 
 struct GameContext {

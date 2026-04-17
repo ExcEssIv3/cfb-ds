@@ -2,10 +2,12 @@
 #include "../behaviors/offensive_behaviors/ball_carrier/throwing_ball_carrier.h"
 #include "../behaviors/offensive_behaviors/route_runner.h"
 #include "../behaviors/defensive_behaviors/blitz.h"
+#include "../behaviors/defensive_behaviors/man_defense.h"
 
 static ThrowingBallCarrier throwingBallCarrierBehavior;
 static RouteRunner routeRunnerBehavior;
 static Blitz blitzBehavior;
+static ManDefense manDefenseBehavior;
 #include "button_a.h"
 #include "button_b.h"
 #include "button_x.h"
@@ -31,7 +33,14 @@ PlayContext::PlayContext(Roster& roster)
         }, 3
     };
 
-    defensePlay = {};
+    defensePlay = {
+        .manDefenders = {
+            { roster.defense[1], roster.offense[1] },
+            { roster.defense[2], roster.offense[2] },
+            { roster.defense[3], roster.offense[3] },
+        },
+        .manDefenderCount = 3,
+    };
 
     // Load button sprite tile data
     buttonGfxPtrs[0] = oamAllocateGfx(&oamMain, SpriteSize_16x16, SpriteColorFormat_16Color);
@@ -62,6 +71,9 @@ void PlayContext::snap(Roster &roster)
     }
     for (int i = 0; i < roster.PLAYER_COUNT; i++) {
         if (roster.defense[i] != nullptr) roster.defense[i]->behavior = &blitzBehavior;
+    }
+    for (int i = 0; i < defensePlay.manDefenderCount; i++) {
+        defensePlay.manDefenders[i].defender->behavior = &manDefenseBehavior;
     }
 }
 

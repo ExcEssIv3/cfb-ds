@@ -43,9 +43,8 @@ void ThrowingBallCarrier::update(Player *self, const GameContext& ctx)
             }
             return;
         }
-    } else {
-        char buf[96];
-        snprintf(buf, sizeof(buf), "THROWING BALL CARRIER: BALL_CARRIER but football not HIDDEN (flags=%d)\n", (int)ctx.football->statusFlags);
-        nocashMessage(buf);
+    } else if (self->hasStatus(Player::Status::BALL_CARRIER)) {
+        printf("THROWING BALL CARRIER: BALL_CARRIER but football not HIDDEN (flags=%d)\n", (int)ctx.football->statusFlags);
+        while(true) swiWaitForVBlank();
     }
 }

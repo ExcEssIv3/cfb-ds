@@ -91,6 +91,50 @@ Roster::Roster() {
         }
     );
 
+    // CBs lined up over WRs
+    defense[1] = new Player(
+        {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 20)},
+        false, Player::Position::CORNERBACK,
+        {
+            .width        = 4,
+            .height       = 8,
+            .acceleration = 0.14f,
+            .topSpeed     = 1.0f,
+            .catchRadius  = 0.3f,
+            .weight       = 185,
+            .breakTackle  = 55,
+            .tackle       = 70,
+        }
+    );
+    defense[2] = new Player(
+        {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 40)},
+        false, Player::Position::CORNERBACK,
+        {
+            .width        = 4,
+            .height       = 8,
+            .acceleration = 0.13f,
+            .topSpeed     = 1.0f,
+            .catchRadius  = 0.3f,
+            .weight       = 190,
+            .breakTackle  = 55,
+            .tackle       = 70,
+        }
+    );
+    defense[3] = new Player(
+        {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(BOTTOM - 20)},
+        false, Player::Position::CORNERBACK,
+        {
+            .width        = 4,
+            .height       = 8,
+            .acceleration = 0.14f,
+            .topSpeed     = 1.05f,
+            .catchRadius  = 0.3f,
+            .weight       = 180,
+            .breakTackle  = 55,
+            .tackle       = 70,
+        }
+    );
+
 }
 
 void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, const DefensivePlayContext& dctx)
@@ -99,6 +143,9 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
     offense[0]->pos = {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
     defense[0]->pos = {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
+    defense[1]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 20)};
+    defense[2]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 40)};
+    defense[3]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(BOTTOM - 20)};
 
     for (int i = 1; i < PLAYER_COUNT; i++) {
         if (offense[i] != nullptr) {

@@ -53,7 +53,7 @@ void Field::update() {
         }
     } else if (hasStatus(Field::Status::IN_PLAY)) {
         football->update();
-        GameContext ctx { football, ballCarrier, roster->PLAYER_COUNT, lineOfScrimmage, firstDown, playContext->offensePlay, {} };
+        GameContext ctx { football, ballCarrier, roster->PLAYER_COUNT, lineOfScrimmage, firstDown, playContext->offensePlay, playContext->defensePlay };
         for (int i = 0; i < roster->PLAYER_COUNT; i++) {
             if (roster->offense[i] != nullptr) {
                 roster->offense[i]->runAI(ctx);
