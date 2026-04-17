@@ -32,6 +32,10 @@ int main(void) {
 
     Field* field = new Field();
 
+    char buf[64];
+    snprintf(buf, sizeof(buf), "test %f", 1.0f);
+    nocashWrite(buf, strlen(buf));
+
     while (1) {
         swiWaitForVBlank();
         Renderer::flush();

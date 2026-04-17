@@ -16,6 +16,14 @@ Player::Player(
 }
 
 void Player::runAI(const GameContext& ctx) {
+    if (hasStatus(Status::STUMBLED)) {
+        if (stumbleFrames > 0) {
+            stumbleFrames--;
+            return;
+        } else {
+            clearStatus(Status::STUMBLED);
+        }
+    }
     if (ctx.football->hasStatus(Football::Status::FUMBLED)) {
         if (distanceTo(pos, ctx.football->pos) < stats.topSpeed) {
             pos = ctx.football->pos;
@@ -81,3 +89,10 @@ void Player::goTo(Vector2 target) {
     } else accelerate(angleTo(pos, target));
 }
 
+bool Player::detectCollision(const Vector2& colliderPos, int width, int height)
+{
+    bool xCollision = pos.x < colliderPos.x + width && pos.x + stats.width > colliderPos.x;
+    bool yCollision = pos.y < colliderPos.y + height && pos.y + stats.height > colliderPos.y;
+
+    return xCollision && yCollision;
+}

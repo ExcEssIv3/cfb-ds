@@ -5,6 +5,7 @@
 #include "../renderer/renderer.h"
 #include "../play_context/play_context.h"
 #include "../roster/roster.h"
+#include "../contact/contact.h"
 
 Field::Field() {
     setStatus(Field::Status::PRESNAP);
@@ -61,10 +62,26 @@ void Field::update() {
         for (int i = 0; i < roster->PLAYER_COUNT; i++) {
             if (roster->defense[i] != nullptr) {
                 roster->defense[i]->runAI(ctx);
-                if (ballCarrier != nullptr && roster->defense[i]->pos == ballCarrier->pos) { // TODO: better bounds detection
+                if (
+                    ballCarrier != nullptr 
+                    && ballCarrier->detectCollision(
+                        roster->defense[i]->pos,
+                        roster->defense[i]->stats.width,
+                        roster->defense[i]->stats.height
+                    )
+                ) {
                     // TACKLE
-                    // TODO: CALCULATE BREAK TACKLE
-                    endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
+                    if (roster->defense[i]->hasStatus(Player::Status::STUMBLED)) {
+                        continue;
+                    } else if (Contact::tackle(roster->defense[i], ballCarrier)) {
+                        nocashMessage("Tackle success\n");
+                        endPlay(ballCarrier->pos.x, (ballCarrier->pos.x > firstDown));
+                    } else {
+                        nocashMessage("Tackle fail\n");
+                        roster->defense[i]->stumbleFrames = 60;
+                        roster->defense[i]->setStatus(Player::Status::STUMBLED);
+                        roster->defense[i]->velocity = {0, 0};
+                    }
                 }
             }
         }

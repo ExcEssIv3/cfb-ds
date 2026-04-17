@@ -27,7 +27,7 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
                 if (intercept.x == -1.0f && intercept.y == -1.0f) {
                     char buf[64];
                     snprintf(buf, sizeof(buf), "WR: interceptPoint no solution (pos=%.1f,%.1f)\n", self->pos.x, self->pos.y);
-                    nocashMessage(buf);
+                    nocashWrite(buf, strlen(buf));
                 }
                 if (false && intercept != Vector2({ -1.0f, -1.0f })) {
                     self->goTo(intercept);

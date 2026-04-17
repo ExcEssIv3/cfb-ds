@@ -36,7 +36,7 @@ void ThrowingBallCarrier::update(Player *self, const GameContext& ctx)
                     if (dest.x == -1.0f && dest.y == -1.0f) {
                         char buf[64];
                         snprintf(buf, sizeof(buf), "THROWING BALL CARRIER: interceptPoint no solution (catcher %d)\n", i);
-                        nocashMessage(buf);
+                        nocashWrite(buf, strlen(buf));
                     }
                     ctx.football->destination = dest;
                 }
