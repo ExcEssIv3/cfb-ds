@@ -11,4 +11,5 @@ struct PlayerStats {
     int   tackle        = 0;
     int   block         = 0;
     int   blockShed     = 0;
+    float throwStrength = 0.0f;
 };

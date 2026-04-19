@@ -27,6 +27,7 @@ Roster::Roster() {
             .tackle       = 40,
             .block        = 40,
             .blockShed    = 30,
+            .throwStrength= 4.0f,
         }
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);

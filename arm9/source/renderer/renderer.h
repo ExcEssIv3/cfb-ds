@@ -41,5 +41,6 @@ namespace Renderer {
     void drawDefensePlayer(Player* player, int xOffset);
     void drawFootball(const Vector2& position, int xOffset, uint8_t whiteLocation = 0);
     void drawField(int drawPosition, int lineOfScrimmage, int firstDown);
+    void drawPowerBar(int screenX, int screenY, float t);
     void flush();
 }

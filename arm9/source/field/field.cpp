@@ -1,6 +1,7 @@
 #include <cmath>
 #include <stdio.h>
 #include "field.h"
+#include "../behaviors/behavior.h"
 #include "../game_context.h"
 #include "../renderer/renderer.h"
 #include "../play_context/play_context.h"
@@ -234,6 +235,16 @@ void Field::draw() {
     // Sidelines drawn last so nothing else can overflow-bleed into them
     Renderer::drawRect(0, 0, VIEWPORT_WIDTH, TOP, SIDELINE_COLOR);
     Renderer::drawRect(0, BOTTOM, VIEWPORT_WIDTH, VIEWPORT_HEIGHT - BOTTOM, SIDELINE_COLOR);
+
+    // Throw power bar above QB when a throw is being charged
+    if (ballCarrier != nullptr && ballCarrier->behavior != nullptr) {
+        float t = ballCarrier->behavior->throwChargeT();
+        if (t >= 0.0f) {
+            int barX = (int)roundf(ballCarrier->pos.x) - (drawPosition - VIEWPORT_WIDTH / 4) - 10;
+            int barY = (int)roundf(ballCarrier->pos.y) - 6;
+            Renderer::drawPowerBar(barX, barY, t);
+        }
+    }
 
     // Button label sprites above each receiver
     int scrollOffset = drawPosition - VIEWPORT_WIDTH / 4;

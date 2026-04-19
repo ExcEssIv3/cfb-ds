@@ -75,6 +75,17 @@ void Renderer::drawFootball(const Vector2& drawPosition, int xOffset, uint8_t wh
     if (whiteRow < 3) Renderer::drawRect(drawX + 1, drawY + whiteRow, 2, 1, COLOR_WHITE);
 }
 
+void Renderer::drawPowerBar(int screenX, int screenY, float t) {
+    const int barW = 20;
+    const int barH = 3;
+    // full blue background
+    drawRect(screenX, screenY, barW, barH, COLOR_BLUE);
+    // depleting dark overlay grows from right as t increases
+    int emptyW = (int)roundf((1.0f - t) * barW);
+    if (emptyW > 0)
+        drawRect(screenX + barW - emptyW, screenY, emptyW, barH, DARKEN(COLOR_BLUE, 2));
+}
+
 void Renderer::flush() {
     dmaCopy(backbuffer, bgGfxPtr, VIEWPORT_WIDTH * VIEWPORT_HEIGHT * 2);
 }

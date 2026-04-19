@@ -11,7 +11,7 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
     if (ctx.ballCarrier == nullptr || ctx.ballCarrier->pos.x < ctx.lineOfScrimmage) {
         if (!self->hasStatus(Player::Status::BALL_CARRIER)) {
             if (ctx.football->hasStatus(Football::Status::HIDDEN)) {
-                self->goTo({ (float)convertToPixelYards(100), self->pos.y });
+                self->goTo({ (float)convertToPixelYards(110), self->pos.y });
             } else if (ctx.football->hasStatus(Football::Status::FLYING)) {
                 if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius) {
                     ctx.football->resetStatus();
@@ -33,7 +33,7 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
                     }
                     if (false && intercept != Vector2({ -1.0f, -1.0f })) {
                         self->goTo(intercept);
-                    } else self->goTo({ (float)convertToPixelYards(100), self->pos.y });
+                    } else self->goTo({ (float)convertToPixelYards(110), self->pos.y });
                 }
             } else if (ctx.football->hasStatus(Football::Status::FUMBLED)) {
                 nocashMessage("ROUTE RUNNER: football FUMBLED, no handler\n");
