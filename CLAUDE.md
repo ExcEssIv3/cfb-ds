@@ -51,19 +51,22 @@ cfb/
         ├── perf/         # Perf namespace — startFrame(), endFrame(), draw(); FPS/ms/heap stats on bottom screen
         ├── roster/       # Roster class — owns offense[]/defense[] Player arrays, construction, reset()
         ├── play_context/ # PlayContext class — offensePlay, button sprites, snap(), draw(), reset()
-        ├── contact/      # Contact namespace — tackle() probability calculation and resolution
+        ├── contact/      # Contact namespace — tackle() and block() probability calculation and resolution
         ├── behaviors/
         │   ├── behavior.h            # Base Behavior struct — virtual update(Player*, GameContext&)
+        │   ├── generic_behaviors/
+        │   │   └── blocking/         # Blocking::findTarget(self, ctx) — finds nearest blockable defender
         │   ├── offensive_behaviors/
         │   │   ├── ball_carrier/     # BallCarrier — d-pad movement for any ball carrier
         │   │   │   ├── throwing_ball_carrier/  # ThrowingBallCarrier : BallCarrier — throw logic
         │   │   │   └── running_ball_carrier/   # RunningBallCarrier : BallCarrier — post-catch running; exposes runningBallCarrierBehavior singleton
-        │   │   └── route_runner/     # RouteRunner — runs route, catches ball, switches to RunningBallCarrier on catch
+        │   │   ├── route_runner/     # RouteRunner — runs route, catches ball, switches to RunningBallCarrier on catch
+        │   │   └── blocker/          # Blocker — seeks assigned rusher from offensePlay.blockers[], falls back to Blocking::findTarget
         │   └── defensive_behaviors/
         │       ├── blitz/            # Blitz — chase ball carrier
         │       └── man_defense/      # ManDefense — man coverage; shadows assigned receiver, intercepts pass, chases ball carrier post-catch
         └── players/
-            ├── player_stats.h        # PlayerStats — width, height, acceleration, topSpeed, catchRadius, weight, breakTackle, tackle (all default 0)
+            ├── player_stats.h        # PlayerStats — width, height, acceleration, topSpeed, catchRadius, weight, breakTackle, tackle, block, blockShed (all default 0)
             └── player.h/cpp          # Player — pos, velocity, isOffense, position, stats (PlayerStats), behavior*, accelerate(), decelerate(), move(), goTo(), runAI()
 ```
 
@@ -73,7 +76,7 @@ The ARM9 Makefile uses `find source -type d` to collect all source subdirectorie
 
 ## Architecture
 
-- **Field** — inherits `StatusMixin` using `FieldStatus` flags. Game state coordinator: owns `drawPosition`, `lineOfScrimmage`, `firstDown`, `Football*`, `Player* ballCarrier`, `Roster*`, and `PlayContext*`. `update()` resolves `ballCarrier`, runs input/AI, clears `PASSABLE` when ball carrier or football crosses the line of scrimmage, detects end-play conditions. `draw()` calls Renderer, iterates roster players, draws football and sidelines, delegates button HUD to `playContext->draw(scrollOffset, passable)`. `endPlay()` updates down/distance then delegates to `playContext->reset()`.
+- **Field** — inherits `StatusMixin` using `FieldStatus` flags. Game state coordinator: owns `drawPosition`, `lineOfScrimmage`, `firstDown`, `Football*`, `Player* ballCarrier`, `Roster*`, and `PlayContext*`. Also owns `blockEngagements[10]` and `blockCooldowns[10]` arrays. `update()` resolves `ballCarrier`, ticks block cooldowns, runs input/AI, registers new block engagements (OL with `BLOCKING` status vs any defender on AABB collision), resolves engagements each frame via `Contact::block()` (freezing both players at `ENGAGED`, applying stumble/pancake on pancake results, adding a 90-frame cooldown on `BEAT_BLOCK`), runs tackle detection, clears `PASSABLE` when ball carrier or football crosses the line of scrimmage, detects end-play conditions. `draw()` calls Renderer, iterates roster players, draws football and sidelines, delegates button HUD to `playContext->draw(scrollOffset, passable)`. `endPlay()` updates down/distance, clears engagement and cooldown lists, then delegates to `playContext->reset()`.
 - **Roster** — owns `offense[PLAYER_COUNT]` and `defense[PLAYER_COUNT]` Player pointer arrays. Constructs all players with position-appropriate `PlayerStats` in its constructor. `endPlay(lineOfScrimmage, octx, dctx)` repositions players and resets `BALL_CARRIER` status between plays.
 - **PlayContext** — owns `OffensivePlayContext offensePlay`, `DefensivePlayContext defensePlay`, and `u16* buttonGfxPtrs[5]`. Constructor takes `Roster&`, builds pass catcher and man coverage assignments. `snap(Roster&)` assigns behaviors at snap: QB → `ThrowingBallCarrier`, other offense → `RouteRunner`, all defense → `Blitz` by default, then overrides man defenders → `ManDefense` and (future) zone defenders → zone behavior. `draw(scrollOffset, passable)` renders button label sprites via OAM when `passable` is true, hides them otherwise. `reset(Roster&, lineOfScrimmage)` delegates to `roster.endPlay()`.
 - **field_geometry.h** — global constants: `TOP`, `BOTTOM`, `DRAW_WIDTH`, `DRAW_HEIGHT`, `END_ZONE_PX`, `PLAYER_SCREEN_X`. Included by `field.h`, `roster.h`, and any other subsystem that needs field dimensions without depending on `Field`.

@@ -1,11 +1,13 @@
 #include "play_context.h"
 #include "../behaviors/offensive_behaviors/ball_carrier/throwing_ball_carrier/throwing_ball_carrier.h"
 #include "../behaviors/offensive_behaviors/route_runner/route_runner.h"
+#include "../behaviors/offensive_behaviors/blocker/blocker.h"
 #include "../behaviors/defensive_behaviors/blitz/blitz.h"
 #include "../behaviors/defensive_behaviors/man_defense/man_defense.h"
 
 static ThrowingBallCarrier throwingBallCarrierBehavior;
 static RouteRunner routeRunnerBehavior;
+static Blocker blockerBehavior;
 static Blitz blitzBehavior;
 static ManDefense manDefenseBehavior;
 #include "button_a.h"
@@ -26,11 +28,10 @@ static int spriteIndexForButton(uint32_t button) {
 PlayContext::PlayContext(Roster& roster)
 {
     offensePlay = {
-        {
-            { roster.offense[1], KEY_A },
-            { roster.offense[2], KEY_B },
-            { roster.offense[3], KEY_X }
-        }, 3
+        .passCatchers     = { { roster.offense[1], KEY_A }, { roster.offense[2], KEY_B }, { roster.offense[3], KEY_X } },
+        .passCatcherCount = 3,
+        .blockers         = { { roster.offense[4], roster.defense[4] }, { roster.offense[5], roster.defense[0] }, { roster.offense[6], roster.defense[5] } },
+        .blockerCount     = 3,
     };
 
     defensePlay = {
@@ -67,7 +68,13 @@ void PlayContext::snap(Roster &roster)
 {
     roster.offense[0]->behavior = &throwingBallCarrierBehavior;
     for (int i = 1; i < roster.PLAYER_COUNT; i++) {
-        if (roster.offense[i] != nullptr) roster.offense[i]->behavior = &routeRunnerBehavior;
+        if (roster.offense[i] == nullptr) continue;
+        if (roster.offense[i]->position == Player::Position::OFFENSIVE_LINE) {
+            roster.offense[i]->behavior = &blockerBehavior;
+            roster.offense[i]->setStatus(Player::Status::BLOCKING);
+        } else {
+            roster.offense[i]->behavior = &routeRunnerBehavior;
+        }
     }
     for (int i = 0; i < roster.PLAYER_COUNT; i++) {
         if (roster.defense[i] != nullptr) roster.defense[i]->behavior = &blitzBehavior;

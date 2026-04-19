@@ -9,4 +9,6 @@ struct PlayerStats {
     int   weight        = 0;
     int   breakTackle   = 0;
     int   tackle        = 0;
+    int   block         = 0;
+    int   blockShed     = 0;
 };

@@ -16,9 +16,17 @@ struct PassCatcher {
     uint32_t button;
 };
 
+struct BlockerAssignment {
+    Player* blocker;
+    Player* rusher;
+};
+
 struct OffensivePlayContext {
     PassCatcher passCatchers[5];
     int passCatcherCount;
+
+    BlockerAssignment blockers[10];
+    int blockerCount;
 };
 
 struct ManDefender {
@@ -51,4 +59,6 @@ struct GameContext {
     uint16_t fieldStatus;
     OffensivePlayContext offensePlay;
     DefensivePlayContext defensePlay;
+    Player** offense;
+    Player** defense;
 };

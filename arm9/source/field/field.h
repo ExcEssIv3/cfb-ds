@@ -9,9 +9,20 @@
 #include "../players/player.h"
 #include "../football/football.h"
 
+struct BlockEngagement {
+    Player* blocker;
+    Player* rusher;
+};
+
+struct BlockCooldown {
+    Player* blocker;
+    Player* rusher;
+    int framesRemaining;
+};
+
 class Field : public StatusMixin {
 public:
-    
+
     // Game state
     int drawPosition;
     int lineOfScrimmage;
@@ -22,6 +33,15 @@ public:
 
     Football* football;
     Player* ballCarrier;
+
+    static constexpr int MAX_BLOCK_ENGAGEMENTS = 10;
+    BlockEngagement blockEngagements[MAX_BLOCK_ENGAGEMENTS];
+    int blockEngagementCount = 0;
+
+    static constexpr int MAX_BLOCK_COOLDOWNS = 10;
+    static constexpr int BEAT_BLOCK_COOLDOWN_FRAMES = 90;
+    BlockCooldown blockCooldowns[MAX_BLOCK_COOLDOWNS];
+    int blockCooldownCount = 0;
 
     Field();
     void draw();
