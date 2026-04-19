@@ -29,7 +29,10 @@ public:
         PANCAKED      = 1 << 2,
         BLOCKING      = 1 << 3,
         FAILED_CATCH  = 1 << 4,
+        JUMPING       = 1 << 5,
     };
+
+    static constexpr int JUMP_FRAMES = 30;
 
     Vector2 pos;
     bool isOffense;
@@ -38,9 +41,12 @@ public:
     Vector2 velocity = { 0.0f, 0.0f };
     Behavior* behavior = nullptr;
     int stumbleFrames = 0;
+    int jumpFrame = 0;
+    float jumpHeight = 0.0f;
 
     Player(Vector2 pos, bool isOffense, Position position, PlayerStats stats = {}, uint16_t statusFlags = 0);
     virtual void runAI(const GameContext& ctx);
+    void startJump();
     void accelerate(float direction);
     void decelerate();
     void move();

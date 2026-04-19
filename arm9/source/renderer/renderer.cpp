@@ -46,12 +46,15 @@ void Renderer::drawField(int drawPosition, int lineOfScrimmage, int firstDown) {
 
 static void drawPlayer(Player* player, int xOffset, uint16_t baseColor) {
     int drawX = (int)roundf(player->pos.x) - xOffset;
-    int drawY = (int)roundf(player->pos.y);
+    int drawY = (int)roundf(player->pos.y - player->jumpHeight);
     uint16_t color = player->hasStatus(Player::Status::STUMBLED) ? DARKEN(baseColor, 1) : baseColor;
     Renderer::drawRect(drawX, drawY, player->stats.width, player->stats.height, COLOR_BLACK);
     Renderer::drawRect(drawX + 1, drawY + 1, player->stats.width - 2, player->stats.height - 2, color);
     if (player->hasStatus(Player::Status::BALL_CARRIER)) {
-        Renderer::drawFootball(player->pos + Vector2({roundf(player->stats.width * 0.25f), roundf(player->stats.height * 0.25f)}), xOffset);
+        Renderer::drawFootball(
+            player->pos + Vector2({roundf(player->stats.width * 0.25f), roundf(player->stats.height * 0.25f) - player->jumpHeight}),
+            xOffset
+        );
     }
 }
 

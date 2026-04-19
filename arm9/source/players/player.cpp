@@ -15,6 +15,13 @@ Player::Player(
     this->statusFlags = statusFlags;
 }
 
+void Player::startJump() {
+    if (hasStatus(Status::JUMPING)) return;
+    setStatus(Status::JUMPING);
+    jumpFrame = 0;
+    jumpHeight = 0.0f;
+}
+
 void Player::runAI(const GameContext& ctx) {
     if (hasStatus(Status::STUMBLED)) {
         if (stumbleFrames > 0) {
@@ -23,6 +30,18 @@ void Player::runAI(const GameContext& ctx) {
         } else {
             clearStatus(Status::STUMBLED);
         }
+    }
+    if (hasStatus(Status::JUMPING)) {
+        jumpFrame++;
+        if (jumpFrame >= JUMP_FRAMES) {
+            clearStatus(Status::JUMPING);
+            jumpHeight = 0.0f;
+        } else {
+            float t = (float)jumpFrame / JUMP_FRAMES;
+            jumpHeight = stats.jump * 4.0f * t * (1.0f - t);
+        }
+        move();
+        return;
     }
     if (ctx.football->hasStatus(Football::Status::FUMBLED)) {
         if (distanceTo(pos, ctx.football->pos) < stats.topSpeed) {

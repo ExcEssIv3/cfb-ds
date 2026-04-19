@@ -28,7 +28,7 @@ Roster::Roster() {
             .block        = 40,
             .blockShed    = 30,
             .throwStrength= 4.0f,
-            .jump         = 5.0f,
+            .jump         = 5,
             .catching     = 60,
         }
     );
@@ -50,7 +50,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 55,
             .blockShed    = 25,
-            .jump         = 7.0f,
+            .jump         = 7,
             .catching     = 85,
         }
     );
@@ -68,7 +68,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 65,
             .blockShed    = 30,
-            .jump         = 7.0f,
+            .jump         = 7,
             .catching     = 88,
         }
     );
@@ -86,7 +86,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 45,
             .blockShed    = 25,
-            .jump         = 7.0f,
+            .jump         = 7,
             .catching     = 82,
         }
     );
@@ -157,7 +157,7 @@ Roster::Roster() {
             .tackle       = 85,
             .block        = 60,
             .blockShed    = 70,
-            .jump         = 4.0f,
+            .jump         = 4,
             .catching     = 40,
         }
     );
@@ -177,7 +177,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 40,
             .blockShed    = 55,
-            .jump         = 6.0f,
+            .jump         = 6,
             .catching     = 65,
         }
     );
@@ -195,7 +195,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 42,
             .blockShed    = 58,
-            .jump         = 6.0f,
+            .jump         = 6,
             .catching     = 65,
         }
     );
@@ -213,7 +213,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 38,
             .blockShed    = 52,
-            .jump         = 6.0f,
+            .jump         = 6,
             .catching     = 65,
         }
     );
@@ -233,7 +233,7 @@ Roster::Roster() {
             .tackle       = 75,
             .block        = 50,
             .blockShed    = 80,
-            .jump         = 3.0f,
+            .jump         = 3,
             .catching     = 10,
         }
     );
@@ -251,7 +251,7 @@ Roster::Roster() {
             .tackle       = 75,
             .block        = 50,
             .blockShed    = 82,
-            .jump         = 3.0f,
+            .jump         = 3,
             .catching     = 10,
         }
     );
@@ -319,6 +319,9 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
                 offense[i]->clearStatus(Player::Status::PANCAKED);
                 offense[i]->clearStatus(Player::Status::BLOCKING);
                 offense[i]->clearStatus(Player::Status::FAILED_CATCH);
+                offense[i]->clearStatus(Player::Status::JUMPING);
+                offense[i]->jumpHeight = 0.0f;
+                offense[i]->jumpFrame  = 0;
             }
             offense[i]->velocity = {0, 0};
         }
@@ -327,6 +330,9 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
             defense[i]->clearStatus(Player::Status::STUMBLED);
             defense[i]->clearStatus(Player::Status::PANCAKED);
             defense[i]->clearStatus(Player::Status::FAILED_CATCH);
+            defense[i]->clearStatus(Player::Status::JUMPING);
+            defense[i]->jumpHeight = 0.0f;
+            defense[i]->jumpFrame  = 0;
             defense[i]->velocity = {0, 0};
         }
     }
