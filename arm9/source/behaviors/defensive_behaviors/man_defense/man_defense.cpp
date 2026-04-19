@@ -27,6 +27,12 @@ void ManDefense::update(Player *self, const GameContext &ctx)
                 self->goTo(receiver->pos);
             }
         } else if (ctx.football->hasStatus(Football::Status::FLYING)) {
+            if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius
+                && ctx.football->height <= self->stats.jump + self->stats.catchRadius) {
+                ctx.football->resetStatus();
+                ctx.football->setStatus(Football::Status::HIDDEN);
+                self->setStatus(Player::Status::BALL_CARRIER);
+            }
             Vector2 catchPoint = interceptPoint(
                 ctx.football->pos,
                 ctx.football->destination,

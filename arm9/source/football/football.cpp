@@ -21,17 +21,9 @@ void Football::update() {
             pos.y = t * yDistance + start.y;
         }
 
-        // Calculating height
-        // height = [gravity * deltaX * (xFinal - deltaX)]/(2 * xVelocity ^ 2)
-        // TODO: include QB height
-
         float distanceTraveled = hypotf(dx, dy);
-        float gravity = 5; // will have to change this value
-        float heightFunc = (gravity * distanceTraveled * (totalDistance - distanceTraveled)) / (2 * speed * speed);
-        float heightFuncNormalized = heightFunc / (totalDistance * totalDistance / 4);
-        float maxHeight = 4.0f;
-
-        drawSize = (int)floorf(heightFuncNormalized * maxHeight) + size;
+        constexpr float arcFactor = 0.25f;
+        height = arcFactor * distanceTraveled * (totalDistance - distanceTraveled) / totalDistance;
     } else if (hasStatus(Status::FUMBLED)) {
         whitePosition = 0;
         // TODO: add fumble logic

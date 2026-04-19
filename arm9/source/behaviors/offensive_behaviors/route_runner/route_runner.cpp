@@ -13,7 +13,8 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
             if (ctx.football->hasStatus(Football::Status::HIDDEN)) {
                 self->goTo({ (float)convertToPixelYards(110), self->pos.y });
             } else if (ctx.football->hasStatus(Football::Status::FLYING)) {
-                if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius) {
+                if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius
+                    && ctx.football->height <= self->stats.jump + self->stats.catchRadius) {
                     ctx.football->resetStatus();
                     ctx.football->setStatus(Football::Status::HIDDEN);
                     self->setStatus(Player::Status::BALL_CARRIER);

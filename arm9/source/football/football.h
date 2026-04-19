@@ -18,8 +18,7 @@ class Football : public StatusMixin {
         Vector2 destination;
         float speed = 10.0f;
         float t = 0.0f; // tracks travel
-        int size = 4;
-        int drawSize = size;
+        float height = 0.0f;
         uint8_t whitePosition = 0;
 
         Football(Vector2 pos)

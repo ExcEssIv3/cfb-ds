@@ -21,13 +21,14 @@ Roster::Roster() {
             .height       = 8,
             .acceleration = 0.10f,
             .topSpeed     = 0.7f,
-            .catchRadius  = 0.15f,
+            .catchRadius  = 1.0f,
             .weight       = 200,
             .breakTackle  = 80,
             .tackle       = 40,
             .block        = 40,
             .blockShed    = 30,
             .throwStrength= 4.0f,
+            .jump         = 5.0f,
         }
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
@@ -48,6 +49,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 55,
             .blockShed    = 25,
+            .jump         = 7.0f,
         }
     );
     offense[2] = new Player(
@@ -64,6 +66,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 65,
             .blockShed    = 30,
+            .jump         = 7.0f,
         }
     );
     offense[3] = new Player(
@@ -80,6 +83,7 @@ Roster::Roster() {
             .tackle       = 50,
             .block        = 45,
             .blockShed    = 25,
+            .jump         = 7.0f,
         }
     );
 
@@ -149,6 +153,7 @@ Roster::Roster() {
             .tackle       = 85,
             .block        = 60,
             .blockShed    = 70,
+            .jump         = 4.0f,
         }
     );
 
@@ -167,6 +172,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 40,
             .blockShed    = 55,
+            .jump         = 6.0f,
         }
     );
     defense[2] = new Player(
@@ -183,6 +189,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 42,
             .blockShed    = 58,
+            .jump         = 6.0f,
         }
     );
     defense[3] = new Player(
@@ -199,6 +206,7 @@ Roster::Roster() {
             .tackle       = 70,
             .block        = 38,
             .blockShed    = 52,
+            .jump         = 6.0f,
         }
     );
 
@@ -217,6 +225,7 @@ Roster::Roster() {
             .tackle       = 75,
             .block        = 50,
             .blockShed    = 80,
+            .jump         = 3.0f,
         }
     );
     defense[5] = new Player(
@@ -233,6 +242,7 @@ Roster::Roster() {
             .tackle       = 75,
             .block        = 50,
             .blockShed    = 82,
+            .jump         = 3.0f,
         }
     );
     // defense[6] = new Player(  // Left DT — commented out until guards are added
