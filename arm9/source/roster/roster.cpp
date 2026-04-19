@@ -274,10 +274,13 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
     // TODO: where players line up needs to be defined by play context
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
     offense[0]->pos = {(float)(lineOfScrimmage - convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
+    defense[0]->pos = {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
+    if (offense[1] != nullptr) offense[1]->pos = {(float)(lineOfScrimmage - 4), (float)(TOP + 20)};
+    if (offense[2] != nullptr) offense[2]->pos = {(float)(lineOfScrimmage - 4), (float)(TOP + 40)};
+    if (offense[3] != nullptr) offense[3]->pos = {(float)(lineOfScrimmage - 4), (float)(BOTTOM - 20)};
     if (offense[4] != nullptr) offense[4]->pos = {(float)(lineOfScrimmage - 7), (float)(DRAW_HEIGHT / 2 + TOP - 15)};
     if (offense[5] != nullptr) offense[5]->pos = {(float)(lineOfScrimmage - 7), (float)(DRAW_HEIGHT / 2 + TOP)};
     if (offense[6] != nullptr) offense[6]->pos = {(float)(lineOfScrimmage - 7), (float)(DRAW_HEIGHT / 2 + TOP + 15)};
-    defense[0]->pos = {(float)(lineOfScrimmage + convertToPixelYards(5)), (float)(DRAW_HEIGHT / 2 + TOP)};
     defense[1]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 20)};
     defense[2]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(TOP + 40)};
     defense[3]->pos = {(float)(lineOfScrimmage + convertToPixelYards(3)), (float)(BOTTOM - 20)};
@@ -289,7 +292,7 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
     for (int i = 0; i < PLAYER_COUNT; i++) {
         if (offense[i] != nullptr) {
             if (i > 0) {
-                offense[i]->pos.x = (float)(lineOfScrimmage - 4);
+                // offense[i]->pos.x = (float)(lineOfScrimmage - 4);
                 offense[i]->clearStatus(Player::Status::BALL_CARRIER);
                 offense[i]->clearStatus(Player::Status::STUMBLED);
                 offense[i]->clearStatus(Player::Status::PANCAKED);
@@ -304,4 +307,5 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
             defense[i]->velocity = {0, 0};
         }
     }
+
 }
