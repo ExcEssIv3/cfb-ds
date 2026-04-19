@@ -24,10 +24,11 @@ public:
 
     // Bits 0-7: shared across all players
     enum class Status : uint16_t {
-        BALL_CARRIER = 1 << 0,
-        STUMBLED     = 1 << 1,
-        PANCAKED     = 1 << 2,
-        BLOCKING     = 1 << 3,
+        BALL_CARRIER  = 1 << 0,
+        STUMBLED      = 1 << 1,
+        PANCAKED      = 1 << 2,
+        BLOCKING      = 1 << 3,
+        FAILED_CATCH  = 1 << 4,
     };
 
     Vector2 pos;

@@ -29,6 +29,7 @@ Roster::Roster() {
             .blockShed    = 30,
             .throwStrength= 4.0f,
             .jump         = 5.0f,
+            .catching     = 60,
         }
     );
     offense[0]->setStatus(Player::Status::BALL_CARRIER);
@@ -43,13 +44,14 @@ Roster::Roster() {
             .height       = 9,
             .acceleration = 0.15f,
             .topSpeed     = 1.0f,
-            .catchRadius  = 0.5f,
+            .catchRadius  = 2.5f,
             .weight       = 180,
             .breakTackle  = 85,
             .tackle       = 50,
             .block        = 55,
             .blockShed    = 25,
             .jump         = 7.0f,
+            .catching     = 85,
         }
     );
     offense[2] = new Player(
@@ -60,13 +62,14 @@ Roster::Roster() {
             .height       = 9,
             .acceleration = 0.12f,
             .topSpeed     = 1.2f,
-            .catchRadius  = 0.5f,
+            .catchRadius  = 2.5f,
             .weight       = 210,
             .breakTackle  = 83,
             .tackle       = 50,
             .block        = 65,
             .blockShed    = 30,
             .jump         = 7.0f,
+            .catching     = 88,
         }
     );
     offense[3] = new Player(
@@ -77,13 +80,14 @@ Roster::Roster() {
             .height       = 9,
             .acceleration = 0.15f,
             .topSpeed     = 1.1f,
-            .catchRadius  = 0.5f,
+            .catchRadius  = 2.5f,
             .weight       = 170,
             .breakTackle  = 93,
             .tackle       = 50,
             .block        = 45,
             .blockShed    = 25,
             .jump         = 7.0f,
+            .catching     = 82,
         }
     );
 
@@ -154,6 +158,7 @@ Roster::Roster() {
             .block        = 60,
             .blockShed    = 70,
             .jump         = 4.0f,
+            .catching     = 40,
         }
     );
 
@@ -173,6 +178,7 @@ Roster::Roster() {
             .block        = 40,
             .blockShed    = 55,
             .jump         = 6.0f,
+            .catching     = 65,
         }
     );
     defense[2] = new Player(
@@ -190,6 +196,7 @@ Roster::Roster() {
             .block        = 42,
             .blockShed    = 58,
             .jump         = 6.0f,
+            .catching     = 65,
         }
     );
     defense[3] = new Player(
@@ -207,6 +214,7 @@ Roster::Roster() {
             .block        = 38,
             .blockShed    = 52,
             .jump         = 6.0f,
+            .catching     = 65,
         }
     );
 
@@ -226,6 +234,7 @@ Roster::Roster() {
             .block        = 50,
             .blockShed    = 80,
             .jump         = 3.0f,
+            .catching     = 10,
         }
     );
     defense[5] = new Player(
@@ -243,6 +252,7 @@ Roster::Roster() {
             .block        = 50,
             .blockShed    = 82,
             .jump         = 3.0f,
+            .catching     = 10,
         }
     );
     // defense[6] = new Player(  // Left DT — commented out until guards are added
@@ -308,6 +318,7 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
                 offense[i]->clearStatus(Player::Status::STUMBLED);
                 offense[i]->clearStatus(Player::Status::PANCAKED);
                 offense[i]->clearStatus(Player::Status::BLOCKING);
+                offense[i]->clearStatus(Player::Status::FAILED_CATCH);
             }
             offense[i]->velocity = {0, 0};
         }
@@ -315,6 +326,7 @@ void Roster::endPlay(int lineOfScrimmage, const OffensivePlayContext& octx, cons
             defense[i]->clearStatus(Player::Status::BALL_CARRIER);
             defense[i]->clearStatus(Player::Status::STUMBLED);
             defense[i]->clearStatus(Player::Status::PANCAKED);
+            defense[i]->clearStatus(Player::Status::FAILED_CATCH);
             defense[i]->velocity = {0, 0};
         }
     }

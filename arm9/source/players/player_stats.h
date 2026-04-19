@@ -13,4 +13,5 @@ struct PlayerStats {
     int   blockShed     = 0;
     float throwStrength = 0.0f;
     float jump         = 0.0f;
+    int   catching     = 0;
 };

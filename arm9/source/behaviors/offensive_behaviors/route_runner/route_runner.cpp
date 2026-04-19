@@ -2,6 +2,7 @@
 
 #include "../ball_carrier/running_ball_carrier/running_ball_carrier.h"
 #include "../../generic_behaviors/blocking/blocking.h"
+#include "../../generic_behaviors/catching/catching.h"
 #include "../../../players/player.h"
 #include "../../../game_context.h"
 #include "../../../football/football.h"
@@ -13,8 +14,7 @@ void RouteRunner::update(Player *self, const GameContext &ctx)
             if (ctx.football->hasStatus(Football::Status::HIDDEN)) {
                 self->goTo({ (float)convertToPixelYards(110), self->pos.y });
             } else if (ctx.football->hasStatus(Football::Status::FLYING)) {
-                if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius
-                    && ctx.football->height <= self->stats.jump + self->stats.catchRadius) {
+                if (Catching::catchBall(self, ctx)) {
                     ctx.football->resetStatus();
                     ctx.football->setStatus(Football::Status::HIDDEN);
                     self->setStatus(Player::Status::BALL_CARRIER);

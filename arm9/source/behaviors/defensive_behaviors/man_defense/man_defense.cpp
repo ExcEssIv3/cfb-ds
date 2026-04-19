@@ -1,6 +1,7 @@
 #include <nds.h>
 #include <stdio.h>
 #include "man_defense.h"
+#include "../../generic_behaviors/catching/catching.h"
 #include "../../../game_context.h"
 #include "../../../players/player.h"
 #include "../../../football/football.h"
@@ -27,8 +28,7 @@ void ManDefense::update(Player *self, const GameContext &ctx)
                 self->goTo(receiver->pos);
             }
         } else if (ctx.football->hasStatus(Football::Status::FLYING)) {
-            if (distanceTo(self->pos, ctx.football->pos) <= self->stats.catchRadius
-                && ctx.football->height <= self->stats.jump + self->stats.catchRadius) {
+            if (Catching::catchBall(self, ctx)) {
                 ctx.football->resetStatus();
                 ctx.football->setStatus(Football::Status::HIDDEN);
                 self->setStatus(Player::Status::BALL_CARRIER);

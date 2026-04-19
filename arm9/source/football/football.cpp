@@ -22,7 +22,7 @@ void Football::update() {
         }
 
         float distanceTraveled = hypotf(dx, dy);
-        constexpr float arcFactor = 0.25f;
+        constexpr float arcFactor = 0.40f;
         height = arcFactor * distanceTraveled * (totalDistance - distanceTraveled) / totalDistance;
     } else if (hasStatus(Status::FUMBLED)) {
         whitePosition = 0;

@@ -16,7 +16,7 @@ void ThrowingBallCarrier::update(Player *self, const GameContext& ctx)
 {
     BallCarrier::update(self, ctx);
     if (self->pos.x < ctx.lineOfScrimmage) {
-        if (ctx.football->hasStatus(Football::Status::HIDDEN)) {
+        if (ctx.football->hasStatus(Football::Status::HIDDEN) && self->hasStatus(Player::Status::BALL_CARRIER)) {
             uint32_t keys = keysDown() | keysHeld() | keysUp();
 
             // TODO: Consolidate key calculation, ideally done at play init
@@ -67,7 +67,7 @@ void ThrowingBallCarrier::throwBall(Player *self, const GameContext &ctx)
 
         ctx.football->start = self->pos;
         ctx.football->pos = self->pos;
-        ctx.football->speed = speed; // UPDATE THIS TO USE HELD DURATION
+        ctx.football->speed = speed;
         ctx.football->t = 0.0f;
         ctx.football->resetStatus();
         ctx.football->setStatus(Football::Status::FLYING);
@@ -80,8 +80,8 @@ void ThrowingBallCarrier::throwBall(Player *self, const GameContext &ctx)
                     ctx.offensePlay.passCatchers[i].player->stats.topSpeed,
                     self->pos,
                     ctx.football->speed
-                );
-                // ) + Vector2({ 3.0f, 0 }); // prevent ball landing right at receiver
+                // );
+                ) + Vector2({ 3.0f, 0 }); // prevent ball landing right at receiver
                 if (dest.x == -1.0f && dest.y == -1.0f) {
                     char buf[64];
                     snprintf(buf, sizeof(buf), "THROWING BALL CARRIER: interceptPoint no solution (catcher %d)\n", i);
